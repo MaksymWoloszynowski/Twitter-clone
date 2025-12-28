@@ -1,0 +1,35 @@
+CREATE TABLE users (
+  id SERIAL PRIMARY KEY,
+  username TEXT UNIQUE NOT NULL,
+  email TEXT UNIQUE NOT NULL,
+  password_hash TEXT NOT NULL,
+  bio TEXT,
+  role TEXT DEFAULT 'user'
+);
+
+CREATE TABLE tweets (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+  content TEXT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE comments (
+  id SERIAL PRIMARY KEY,
+  tweet_id INTEGER REFERENCES tweets(id) ON DELETE CASCADE,
+  user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+  content TEXT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE likes (
+  user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+  tweet_id INTEGER REFERENCES tweets(id) ON DELETE CASCADE,
+  PRIMARY KEY (user_id, tweet_id)
+);
+
+CREATE TABLE follows (
+  follower_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+  following_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+  PRIMARY KEY (follower_id, following_id)
+);
