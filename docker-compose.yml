@@ -1,0 +1,18 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: twitter_postgres
+    environment:
+      POSTGRES_USER: twitter
+      POSTGRES_PASSWORD: twitter
+      POSTGRES_DB: twitter
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./backend/db:/docker-entrypoint-initdb.d
+
+volumes:
+  pgdata:
