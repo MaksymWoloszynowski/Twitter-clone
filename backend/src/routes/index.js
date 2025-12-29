@@ -1,10 +1,12 @@
 import { Router } from "express";
 import usersRouter from "./usersRoutes.js"
-import tweetsRoutes from "./tweetsRoutes.js"
+import tweetsRouter from "./tweetsRoutes.js"
+import authRouter from "./authRoutes.js"
 
 const router = Router();
 
 router.use(usersRouter)
-router.use(tweetsRoutes)
+router.use(tweetsRouter)
+router.use(authRouter)
 
 export default router;
