@@ -18,6 +18,7 @@ const generateToken = (id) => {
 const register = async (req, res) => {
   try {
     const { username, email, password } = req.body;
+    console.log(req.body)
 
     if (!username || !email || !password) {
       return res
@@ -31,7 +32,7 @@ const register = async (req, res) => {
     );
 
     if (userExists.rowCount > 0) {
-      return res.status(400).json({ message: "User already exists" });
+      return res.status(409).json({ message: "User already exists" });
     }
 
     const usernameTaken = await pool.query(
@@ -110,7 +111,7 @@ const logout = (req, res) => {
 };
 
 const me = (req, res) => {
-  res.json({ user: req.user });
+  res.status(200).json({ user: req.user });
 }
 
 export default { register, login, logout, me };
