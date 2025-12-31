@@ -4,10 +4,10 @@ import authenticateToken from "../middleware/auth.js";
 
 const router = Router();
 
-router.get("/tweets", tweetsController.getAllTweets);
+router.get("/tweets", authenticateToken, tweetsController.getAllTweets);
 router.get("/tweets/following", authenticateToken, tweetsController.getAllFollowingTweets);
-router.get("/tweets/:id", tweetsController.getTweet);
-router.get("/tweets/:id/comments", tweetsController.getTweetComments);
+router.get("/tweets/:id", authenticateToken, tweetsController.getTweet);
+router.get("/tweets/:id/comments", authenticateToken, tweetsController.getTweetComments);
 
 router.post("/tweets/create", authenticateToken, tweetsController.createTweet);
 router.post("/tweets/:id/comments", authenticateToken, tweetsController.createComment);

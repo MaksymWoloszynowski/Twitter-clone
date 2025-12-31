@@ -4,9 +4,9 @@ import authenticateToken from "../middleware/auth.js";
 
 const router = Router();
 
-router.get("/users/:username", userController.getUserProfile);
-router.get("/users/:username/following", userController.getUserFollowing);
-router.get("/users/:username/followers", userController.getUserFollowers);
+router.get("/users/:username", authenticateToken, userController.getUserProfile);
+router.get("/users/:username/following", authenticateToken, userController.getUserFollowing);
+router.get("/users/:username/followers", authenticateToken, userController.getUserFollowers);
 
 router.post("/users/:username/follow", authenticateToken, userController.followUser);
 router.delete("/users/:username/follow", authenticateToken, userController.unfollowUser);
