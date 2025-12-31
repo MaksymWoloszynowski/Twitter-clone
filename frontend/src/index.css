@@ -8,9 +8,16 @@
 
 html {
     font-family: 'Nunito', sans-serif;
-    color: #fff;
 }
 
-body {
-    background-color: dodgerblue;
+a {
+  color: #1da1f2;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.15s ease, text-decoration 0.15s ease;
+}
+
+a:focus-visible {
+  outline: none;
+  text-decoration: underline;
 }
