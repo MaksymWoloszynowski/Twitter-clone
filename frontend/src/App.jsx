@@ -1,35 +1,48 @@
-import { useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
-import api from "./api/api";
-import Login from "./components/Login";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
 import Home from "./pages/Home";
-import Register from "./components/Register";
-import AuthContext from "./context/AuthContext";
-import { useContext } from "react";
-import NotFound from "./components/NotFound";
+import Landing from "./pages/Landing";
+import NotFound from "./pages/NotFound";
+import RequireAuth from "./components/RequireAuth";
+import AdminPage from "./pages/AdminPage";
+import PublicLayout from "./layouts/PublicLayout";
+import UnauthorizedPage from "./pages/UnauthorizedPage";
+import PersistLogin from "./pages/PersistLogin";
+import Profile from "./pages/Profile";
+import AppLayout from "./layouts/AppLayout";
+import Chat from "./pages/Chat";
+import Notifications from "./pages/Notifications";
+import Tweet from "./pages/Tweet";
 
 function App() {
-  const { setAuth } = useContext(AuthContext);
-  useEffect(() => {
-    const fetchMe = async () => {
-      try {
-        const res = await api.get("/auth/me");
-        setAuth(res.data.user);
-      } catch {
-        setAuth(null);
-      }
-    };
-
-    fetchMe();
-  }, []);
-
   return (
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="register" element={<Register />} />
+    <Routes>
+      <Route element={<PublicLayout />}>
+        <Route path="/" element={<Landing />} />
         <Route path="login" element={<Login />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
+        <Route path="register" element={<Register />} />
+        <Route path="unauthorized" element={<UnauthorizedPage />} />
+      </Route>
+
+      <Route element={<PersistLogin />}>
+        <Route element={<RequireAuth allowedRoles={["user", "admin"]} />}>
+          <Route element={<AppLayout />}>
+            <Route path="home" element={<Home />} />
+            <Route path="notifications" element={<Notifications />} />
+            <Route path="chat" element={<Chat />} />
+            <Route path="profile/:profileId" element={<Profile />} />
+            <Route path="profile/:profileId/:tweetId" element={<Tweet />} />
+          </Route>
+        </Route>
+
+        <Route element={<RequireAuth allowedRoles={["admin"]} />}>
+          <Route path="/admin" element={<AdminPage />} />
+        </Route>
+      </Route>
+
+      <Route path="*" element={<NotFound />} />
+    </Routes>
   );
 }
 
