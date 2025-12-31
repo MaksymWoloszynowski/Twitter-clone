@@ -1,0 +1,40 @@
+.sidebar {
+  width: 16rem;
+  padding: 1rem;
+  border-right: 0.0625rem solid #e1e8ed;
+  min-height: 100vh;
+  font-size: 1.5rem;
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.link,
+.active {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 9999px;
+  font-weight: 500;
+  text-decoration: none;
+  color: #14171a;
+  transition: background-color 0.2s;
+}
+
+.link:hover {
+  background-color: rgba(29, 161, 242, 0.1);
+}
+
+.active {
+  font-weight: 700;
+  color: #1da1f2;
+}
+
+svg {
+  width: 1.5rem;
+  height: 1.5rem;
+}
