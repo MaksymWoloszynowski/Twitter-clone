@@ -2,6 +2,7 @@ import { pool } from "../db.js";
 
 const getUserProfile = async (req, res) => {
   const username = req.params.username;
+  const userId = req.user.id;
 
   try {
     const userInfoResult = await pool.query(
@@ -23,18 +24,27 @@ const getUserProfile = async (req, res) => {
     const userInfo = userInfoResult.rows[0];
 
     const userTweetsResult = await pool.query(
-      `SELECT 
-         tweets.id AS tweet_id,
-         tweets.content,
-         tweets.created_at,
-         users.username,
-         (SELECT COUNT(*) FROM comments WHERE comments.tweet_id = tweets.id) AS comment_count,
-         (SELECT COUNT(*) FROM likes WHERE likes.tweet_id = tweets.id) AS like_count
-       FROM tweets
-       JOIN users ON tweets.user_id = users.id
-       WHERE users.username = $1
-       ORDER BY tweets.created_at DESC`,
-      [username]
+      `SELECT
+        t.id AS tweet_id,
+        t.content,
+        t.created_at,
+        u.username,
+      COUNT(DISTINCT l.user_id) AS like_count,
+      COUNT(DISTINCT c.id) AS comment_count,
+      EXISTS (
+          SELECT 1
+          FROM likes l2
+          WHERE l2.tweet_id = t.id
+            AND l2.user_id = $2
+      ) AS liked_by_me
+      FROM tweets t
+      LEFT JOIN likes l ON l.tweet_id = t.id
+      LEFT JOIN comments c ON c.tweet_id = t.id
+      LEFT JOIN users u ON u.id = t.user_id
+      WHERE u.username = $1
+      GROUP BY t.id, u.id
+      ORDER BY t.created_at DESC;`,
+      [username, userId]
     );
 
     res.status(200).json({

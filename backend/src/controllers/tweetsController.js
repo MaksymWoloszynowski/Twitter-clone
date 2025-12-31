@@ -1,18 +1,30 @@
 import { pool } from "../db.js";
 
 const getAllTweets = async (req, res) => {
+  const userId = req.user.id;
+
   try {
     const result = await pool.query(
-      `SELECT 
-         tweets.id,
-         tweets.content,
-         tweets.created_at,
-         users.username,
-         (SELECT COUNT(*) FROM comments WHERE comments.tweet_id = tweets.id) AS comment_count,
-         (SELECT COUNT(*) FROM likes WHERE likes.tweet_id = tweets.id) AS like_count
-       FROM tweets
-       JOIN users ON tweets.user_id = users.id
-       ORDER BY tweets.created_at DESC`
+      `SELECT
+        t.id AS tweet_id,
+        t.content,
+        t.created_at,
+        u.username,
+      COUNT(DISTINCT l.user_id) AS like_count,
+      COUNT(DISTINCT c.id) AS comment_count,
+      EXISTS (
+          SELECT 1
+          FROM likes l2
+          WHERE l2.tweet_id = t.id
+            AND l2.user_id = $1
+      ) AS liked_by_me
+      FROM tweets t
+      LEFT JOIN likes l ON l.tweet_id = t.id
+      LEFT JOIN comments c ON c.tweet_id = t.id
+      LEFT JOIN users u ON u.id = t.user_id
+      GROUP BY t.id, u.id
+      ORDER BY t.created_at DESC;`,
+      [userId]
     );
     res.status(200).json(result.rows);
   } catch (error) {
@@ -22,24 +34,30 @@ const getAllTweets = async (req, res) => {
 };
 
 const getAllFollowingTweets = async (req, res) => {
-  const userID = req.user.id;
+  const userId = req.user.id;
 
   try {
     const result = await pool.query(
-      `SELECT 
-         uf.id AS user_id,
-         uf.username,
-         t.id AS tweet_id,
-         t.content,
-         t.created_at,
-         (SELECT COUNT(*) FROM comments WHERE tweet_id = t.id) AS comment_count,
-         (SELECT COUNT(*) FROM likes WHERE tweet_id = t.id) AS like_count
-       FROM follows f
-       JOIN users uf ON uf.id = f.following_id
-       JOIN tweets t ON t.user_id = uf.id
-       WHERE f.follower_id = $1
-       ORDER BY t.created_at DESC`,
-      [userID]
+      `SELECT
+        t.id AS tweet_id,
+        t.content,
+        t.created_at,
+        u.username,
+      COUNT(DISTINCT l.user_id) AS like_count,
+      COUNT(DISTINCT c.id) AS comment_count,
+      EXISTS (
+          SELECT 1
+          FROM likes l2
+          WHERE l2.tweet_id = t.id
+            AND l2.user_id = $1
+      ) AS liked_by_me
+      FROM tweets t
+      LEFT JOIN likes l ON l.tweet_id = t.id
+      LEFT JOIN comments c ON c.tweet_id = t.id
+      LEFT JOIN users u ON u.id = t.user_id
+      GROUP BY t.id, u.id
+      ORDER BY t.created_at DESC;`,
+      [userId]
     );
 
     res.status(200).json(result.rows);
@@ -55,14 +73,20 @@ const getTweet = async (req, res) => {
   try {
     const result = await pool.query(
       `SELECT 
-         tweets.id,
+         tweets.id as tweet_id,
          tweets.content,
          tweets.created_at,
          users.username,
          (SELECT COUNT(*) FROM comments WHERE comments.tweet_id = tweets.id) AS comment_count,
-         (SELECT COUNT(*) FROM likes WHERE likes.tweet_id = tweets.id) AS like_count
-       FROM tweets
-       JOIN users ON tweets.user_id = users.id
+         (SELECT COUNT(*) FROM likes WHERE likes.tweet_id = tweets.id) AS like_count,
+         EXISTS (
+          SELECT 1
+          FROM likes l2
+          WHERE l2.tweet_id = t.id
+            AND l2.user_id = $1
+        ) AS liked_by_me
+       FROM tweets t
+       JOIN users ON t.user_id = users.id
        WHERE tweets.id = $1`,
       [tweetId]
     );
@@ -144,10 +168,10 @@ const editTweet = async (req, res) => {
       return res.status(403).json({ error: "Unauthorized" });
     }
 
-    await pool.query(
-      `UPDATE tweets SET content = $1 WHERE id = $2`,
-      [content, tweet_id]
-    );
+    await pool.query(`UPDATE tweets SET content = $1 WHERE id = $2`, [
+      content,
+      tweet_id,
+    ]);
 
     res.status(200).json({ message: "Tweet updated successfully" });
   } catch (error) {
@@ -212,10 +236,10 @@ const editComment = async (req, res) => {
       return res.status(403).json({ error: "Unauthorized" });
     }
 
-    await pool.query(
-      `UPDATE comments SET content = $1 WHERE id = $2`,
-      [content, comment_id]
-    );
+    await pool.query(`UPDATE comments SET content = $1 WHERE id = $2`, [
+      content,
+      comment_id,
+    ]);
 
     res.status(200).json({ message: "Comment updated successfully" });
   } catch (error) {
