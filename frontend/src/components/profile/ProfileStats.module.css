@@ -1,0 +1,18 @@
+.stats {
+    display: flex;
+    gap: 1em;
+    margin-left: 1rem;
+}
+
+.stat {
+    color: #536471;
+}
+
+.stat:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.thick {
+    color: black;
+}
