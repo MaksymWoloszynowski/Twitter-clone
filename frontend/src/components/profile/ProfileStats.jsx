@@ -1,13 +1,16 @@
+import styles from "./ProfileStats.module.css"
+import { Link } from "react-router-dom";
+
 const ProfileStats = ({ user }) => {
   return (
-    <section style={{ display: "flex", gap: "1.5rem" }}>
-      <span>
-        <strong>{user.followingCount}</strong> Following
-      </span>
-      <span>
-        <strong>{user.followersCount}</strong> Followers
-      </span>
-    </section>
+    <div className={styles.stats}>
+      <Link to={`/profile/${user.username}/following`} className={styles.stat}>
+        <strong className={styles.thick}>{user.following_count}</strong> Following
+      </Link>
+      <Link to={`/profile/${user.username}/followers`} className={styles.stat}>
+        <strong className={styles.thick}>{user.followers_count}</strong> Followers
+      </Link>
+    </div>
   );
 };
 
