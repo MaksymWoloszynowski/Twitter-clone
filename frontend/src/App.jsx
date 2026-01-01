@@ -14,6 +14,7 @@ import AppLayout from "./layouts/AppLayout";
 import Chat from "./pages/Chat";
 import Notifications from "./pages/Notifications";
 import Tweet from "./pages/Tweet";
+import Follows from "./pages/Follows"
 
 function App() {
   return (
@@ -32,7 +33,8 @@ function App() {
             <Route path="notifications" element={<Notifications />} />
             <Route path="chat" element={<Chat />} />
             <Route path="profile/:profileId" element={<Profile />} />
-            <Route path="profile/:profileId/:tweetId" element={<Tweet />} />
+            <Route path="profile/:profileId/tweets/:tweetId" element={<Tweet />} />
+            <Route path="profile/:profileId/:followType" element={<Follows />} />
           </Route>
         </Route>
 
