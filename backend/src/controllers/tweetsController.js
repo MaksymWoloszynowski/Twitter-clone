@@ -39,24 +39,34 @@ const getAllFollowingTweets = async (req, res) => {
   try {
     const result = await pool.query(
       `SELECT
-        t.id AS tweet_id,
-        t.content,
-        t.created_at,
-        u.username,
-      COUNT(DISTINCT l.user_id) AS like_count,
-      COUNT(DISTINCT c.id) AS comment_count,
-      EXISTS (
-          SELECT 1
-          FROM likes l2
-          WHERE l2.tweet_id = t.id
-            AND l2.user_id = $1
-      ) AS liked_by_me
-      FROM tweets t
-      LEFT JOIN likes l ON l.tweet_id = t.id
-      LEFT JOIN comments c ON c.tweet_id = t.id
-      LEFT JOIN users u ON u.id = t.user_id
-      GROUP BY t.id, u.id
-      ORDER BY t.created_at DESC;`,
+          t.id AS tweet_id,
+          t.content,
+          t.created_at,
+          u.username,
+
+        COUNT(DISTINCT l.user_id) AS like_count,
+        COUNT(DISTINCT c.id) AS comment_count,
+
+        EXISTS (
+            SELECT 1
+            FROM likes l2
+            WHERE l2.tweet_id = t.id
+              AND l2.user_id = $1
+        ) AS liked_by_me
+
+        FROM tweets t
+
+        JOIN follows f
+          ON f.following_id = t.user_id
+        AND f.follower_id = $1
+
+        JOIN users u ON u.id = t.user_id
+
+        LEFT JOIN likes l ON l.tweet_id = t.id
+        LEFT JOIN comments c ON c.tweet_id = t.id
+
+        GROUP BY t.id, u.id
+        ORDER BY t.created_at DESC;`,
       [userId]
     );
 
@@ -69,16 +79,17 @@ const getAllFollowingTweets = async (req, res) => {
 
 const getTweet = async (req, res) => {
   const tweetId = req.params.id;
+  const userId = req.user.id;
 
   try {
     const result = await pool.query(
       `SELECT 
-         tweets.id as tweet_id,
-         tweets.content,
-         tweets.created_at,
-         users.username,
-         (SELECT COUNT(*) FROM comments WHERE comments.tweet_id = tweets.id) AS comment_count,
-         (SELECT COUNT(*) FROM likes WHERE likes.tweet_id = tweets.id) AS like_count,
+         t.id as tweet_id,
+         t.content,
+         t.created_at,
+         u.username,
+         COUNT(DISTINCT l.user_id) AS like_count,
+        COUNT(DISTINCT c.id) AS comment_count,
          EXISTS (
           SELECT 1
           FROM likes l2
@@ -86,9 +97,12 @@ const getTweet = async (req, res) => {
             AND l2.user_id = $1
         ) AS liked_by_me
        FROM tweets t
-       JOIN users ON t.user_id = users.id
-       WHERE tweets.id = $1`,
-      [tweetId]
+       JOIN users u ON t.user_id = u.id
+       LEFT JOIN likes l ON l.tweet_id = t.id
+       LEFT JOIN comments c ON c.tweet_id = t.id
+       WHERE t.id = $2
+      GROUP BY t.id, u.id;`,
+      [userId, tweetId]
     );
 
     if (result.rowCount === 0) {

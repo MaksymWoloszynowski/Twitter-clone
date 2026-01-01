@@ -7,14 +7,20 @@ const getUserProfile = async (req, res) => {
   try {
     const userInfoResult = await pool.query(
       `SELECT 
-         id AS user_id,
-         username,
-         bio,
-         (SELECT COUNT(*) FROM follows WHERE follower_id = users.id) AS following_count,
-         (SELECT COUNT(*) FROM follows WHERE following_id = users.id) AS followers_count
-       FROM users
-       WHERE username = $1`,
-      [username]
+          u.id AS user_id,
+          u.username,
+          u.bio,
+          (SELECT COUNT(*) FROM follows WHERE follower_id = u.id) AS following_count,
+          (SELECT COUNT(*) FROM follows WHERE following_id = u.id) AS followers_count,
+          EXISTS ( 
+            SELECT 1
+            FROM follows f
+            WHERE f.follower_id = $1
+              AND f.following_id = u.id
+          ) AS followed_by_me
+        FROM users u
+        WHERE u.username = $2;`,
+      [userId, username]
     );
 
     if (!userInfoResult.rows.length) {
@@ -59,6 +65,7 @@ const getUserProfile = async (req, res) => {
 
 const getUserFollowing = async (req, res) => {
   const username = req.params.username;
+  const userId = req.user.id;
 
   try {
     const userExists = await pool.query(
@@ -73,12 +80,18 @@ const getUserFollowing = async (req, res) => {
       `SELECT 
         u_followed.id,
         u_followed.username,
-        u_followed.bio
+        u_followed.bio,
+        EXISTS ( 
+            SELECT 1
+            FROM follows f
+            WHERE f.follower_id = $1
+              AND f.following_id = u_followed.id
+          ) AS followed_by_me
       FROM users u
       JOIN follows f ON f.follower_id = u.id
       JOIN users u_followed ON u_followed.id = f.following_id
-      WHERE u.username = $1`,
-      [username]
+      WHERE u.username = $2`,
+      [userId, username]
     );
 
     res.status(200).json(userFollowing.rows);
