@@ -1,13 +1,11 @@
 import { useNavigate } from "react-router-dom";
 import styles from "./TweetCard.module.css";
 import { MessageCircle, Heart } from "lucide-react";
-import api from "../api/api";
-import { useState } from "react";
+import useLikes from "../hooks/useLikes";
 
 const TweetCard = ({ tweet }) => {
   const navigate = useNavigate();
-  const [likes, setLikes] = useState(parseInt(tweet.like_count));
-  const [liked, setLiked] = useState(tweet.liked_by_me);
+  const { likes, liked, handleLike } = useLikes({tweet});
 
   const timeAgo = (date) => {
     const seconds = Math.floor((Date.now() - new Date(date)) / 1000);
@@ -29,34 +27,13 @@ const TweetCard = ({ tweet }) => {
   };
 
   const handleClick = () => {
-    navigate(`/profile/${tweet.username}/${tweet.tweet_id}`);
+    navigate(`/profile/${tweet.username}/tweets/${tweet.tweet_id}`);
   };
 
   const handleProfileClick = (e) => {
     e.stopPropagation();
     navigate(`/profile/${tweet.username}/`);
   }
-
-  const handleLike = async (e) => {
-    e.stopPropagation();
-
-    const wasLiked = liked;
-
-    setLiked(!wasLiked);
-    setLikes((prev) => prev + (wasLiked ? -1 : 1));
-
-    try {
-      if (!wasLiked) {
-        await api.post(`/tweets/${tweet.tweet_id}/like`);
-      } else {
-        await api.delete(`/tweets/${tweet.tweet_id}/like`);
-      }
-    } catch (error) {
-      setLiked(wasLiked);
-      setLikes((prev) => prev + (wasLiked ? 1 : -1));
-      console.log(error);
-    }
-  };
 
   return (
     <article className={styles.card} onClick={handleClick}>
