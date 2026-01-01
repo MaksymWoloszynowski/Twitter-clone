@@ -1,14 +1,14 @@
 import { useParams } from "react-router-dom";
 import api from "../api/api";
 import { useEffect, useState } from "react";
-
 import ProfileHeader from "../components/profile/ProfileHeader";
 import ProfileStats from "../components/profile/ProfileStats";
-import ProfileActions from "../components/profile/ProfileActions";
 import ProfileTweetList from "../components/profile/ProfileTweetList";
+import useAuth from "../hooks/useAuth";
 
 const Profile = () => {
   const { profileId } = useParams();
+  const { auth } = useAuth();
 
   const [userInfo, setUserInfo] = useState(null);
   const [userTweets, setUserTweets] = useState([]);
@@ -35,8 +35,11 @@ const Profile = () => {
 
   return (
     <div>
-      <ProfileHeader user={userInfo} />
-      <ProfileActions user={userInfo} />
+      <ProfileHeader
+        user={userInfo}
+        profileId={profileId}
+        isMe={auth?.id === userInfo.user_id}
+      />
       <ProfileStats user={userInfo} />
       <ProfileTweetList tweets={userTweets} />
     </div>
