@@ -1,23 +1,6 @@
-import { useState } from "react";
 import styles from "./ProfileHeader.module.css";
-import api from "../../api/api";
 
-const ProfileHeader = ({ user, profileId, isMe }) => {
-  const [isFollowing, setIsFollowing] = useState(user.followed_by_me);
-
-  const toggleFollow = async () => {
-    try {
-      if (isFollowing) {
-        await api.delete(`/users/${profileId}/follow`);
-        setIsFollowing(false)
-      } else {
-        await api.post(`/users/${profileId}/follow`);
-        setIsFollowing(true)
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  };
+const ProfileHeader = ({ user, isMe, isFollowing, toggleFollow }) => {
   
   return (
     <div className={styles.container}>
