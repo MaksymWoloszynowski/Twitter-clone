@@ -4,7 +4,7 @@ import styles from "./CreateTweet.module.css";
 
 const MAX_LENGTH = 280;
 
-export default function CreateTweet({ onTweetCreated }) {
+const CreateTweet = ({ endpoint = "/tweets/create", placeholder }) => {
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -15,9 +15,8 @@ export default function CreateTweet({ onTweetCreated }) {
 
     setLoading(true);
     try {
-      await api.post("/tweets/create", { content: text });
+      await api.post(endpoint, { content: text });
       setContent("");
-      onTweetCreated?.();
     } catch (err) {
       console.error(err);
     } finally {
@@ -27,22 +26,21 @@ export default function CreateTweet({ onTweetCreated }) {
 
   return (
     <form className={styles.card} onSubmit={handleSubmit}>
-      <div className={styles.avatar} />
-
       <div className={styles.main}>
-        <textarea
-          className={styles.textarea}
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          placeholder="What’s happening?"
-        />
+        <div className={styles.top}>
+          <div className={styles.avatar} />
+          <textarea
+            className={styles.textarea}
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            placeholder={placeholder}
+          />
+        </div>
 
         <div className={styles.footer}>
           <span
             className={
-              content.length > MAX_LENGTH
-                ? styles.counterError
-                : styles.counter
+              content.length > MAX_LENGTH ? styles.counterError : styles.counter
             }
           >
             {content.length} / {MAX_LENGTH}
@@ -58,4 +56,6 @@ export default function CreateTweet({ onTweetCreated }) {
       </div>
     </form>
   );
-}
+};
+
+export default CreateTweet;
