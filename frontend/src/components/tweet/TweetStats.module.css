@@ -1,0 +1,25 @@
+.actions {
+  display: flex;
+  justify-content: space-between;
+  max-width: 14rem;
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  color: #536471;
+}
+
+.actions span {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  transition: color 0.15s ease;
+}
+
+.actions span:hover {
+  color: #1da1f2;
+}
+
+.liked,
+.heart:hover {
+  color: #e0245e;
+  fill: #e0245e;
+}
