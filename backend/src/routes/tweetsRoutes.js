@@ -10,7 +10,7 @@ router.get("/tweets/:id", authenticateToken, tweetsController.getTweet);
 router.get("/tweets/:id/comments", authenticateToken, tweetsController.getTweetComments);
 
 router.post("/tweets/create", authenticateToken, tweetsController.createTweet);
-router.post("/tweets/:id/comments", authenticateToken, tweetsController.createComment);
+router.post("/tweets/:id/comment", authenticateToken, tweetsController.createComment);
 router.post("/tweets/:id/like", authenticateToken, tweetsController.likeTweet);
 
 router.put("/tweets/:id", authenticateToken, tweetsController.editTweet);
