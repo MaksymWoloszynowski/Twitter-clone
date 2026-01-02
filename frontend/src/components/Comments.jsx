@@ -1,10 +1,10 @@
-import CommentCard from "./CommentCard";
+import TweetCard from "./tweet/TweetCard";
 
 const Comments = ({ comments }) => {
   return (
     <div>
       {comments.map((comment) => {
-        return <CommentCard key={comment.id} comment={comment} />;
+        return <TweetCard key={comment.id} tweet={comment} />;
       })}
     </div>
   );
