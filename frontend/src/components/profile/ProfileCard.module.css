@@ -1,0 +1,102 @@
+.container {
+  display: flex;
+  align-items: flex-start;
+  padding: 1rem;
+  border-bottom: 1px solid #e6ecf0;
+  background-color: #fff;
+}
+
+.profileImage {
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 50%;
+  background-color: #ccd6dd;
+  margin-right: 1rem;
+  flex-shrink: 0;
+}
+
+.profileInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.username {
+  font-weight: 700;
+  font-size: 1rem;
+  color: #14171a;
+}
+
+.handle {
+  font-size: 0.875rem;
+  color: #657786;
+  margin-bottom: 0.25rem;
+}
+
+.bio {
+  font-size: 0.875rem;
+  color: #14171a;
+  margin-bottom: 0.5rem;
+}
+
+
+.username {
+    font-size: 1rem;
+    font-weight: 800;
+    color: #0f1419;
+}
+
+.topRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.bio {
+    font-size: 1rem;
+    line-height: 1.4;
+}
+
+.followBtn {
+    padding: 0.5rem 1.25rem;
+    font-size: 0.875rem;
+    font-weight: 700;
+    border-radius: 9999px;
+    cursor: pointer;
+    background-color: #0f1419;
+    color: #fff;
+    border: none;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.followBtn:hover {
+    background-color: #272c30;
+}
+
+.following {
+    background-color: #fff;
+    color: #0f1419;
+    border: 0.0625rem solid #cfd9de;
+}
+
+.following:hover {
+    background-color: #fee;
+    color: #e0245e;
+    border-color: #e0245e;
+}
+
+@media (max-width: 40rem) {
+    .profileHeader {
+        height: 9rem;
+    }
+
+    .profileImage {
+        width: 6rem;
+        height: 6rem;
+        margin-top: -3rem;
+    }
+
+    .username {
+        font-size: 1.125rem;
+    }
+}
