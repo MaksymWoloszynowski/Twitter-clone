@@ -1,18 +1,16 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import api from "../api/api";
 import Comments from "../components/Comments";
 import styles from "./Tweet.module.css";
-import useLikes from "../hooks/useLikes";
-import { Bookmark, Heart, MessageCircle } from "lucide-react";
+import CreateTweet from "../components/CreateTweet";
+import TweetStats from "../components/tweet/TweetStats";
 
 const Tweet = () => {
   const { tweetId } = useParams();
   const [comments, setComments] = useState([]);
   const [tweet, setTweet] = useState({});
   const [loading, setLoading] = useState(true);
-
-  const { likes, liked, handleLike } = useLikes({ tweet });
 
   useEffect(() => {
     const fetchTweet = async () => {
@@ -67,11 +65,11 @@ const Tweet = () => {
     <div className={styles.container}>
       <article className={styles.tweet}>
         <header className={styles.header}>
-          <div className={styles.avatar} />
+          <Link to={`/profile/${tweet.username}`}><div className={styles.avatar} /></Link>
 
           <div className={styles.user}>
-            <p className={styles.username}>{tweet.username}</p>
-            <p className={styles.handle}>@{tweet.username}</p>
+            <Link to={`/profile/${tweet.username}`}><p className={styles.username}>{tweet.username}</p></Link>
+            <Link to={`/profile/${tweet.username}`}><p className={styles.handle}>@{tweet.username}</p></Link>
           </div>
         </header>
 
@@ -83,21 +81,9 @@ const Tweet = () => {
           <span>{formatDate(tweet.created_at).date}</span>
         </div>
 
-        <footer className={styles.actions}>
-          <span>
-            <MessageCircle /> {tweet.comment_count}
-          </span>
-          <span className={styles.heart} onClick={handleLike}>
-            <Heart className={liked ? styles.liked : ""} />
-            {likes}
-          </span>
-          <span>
-            <Bookmark />
-            {likes}
-          </span>
-        </footer>
+        <TweetStats tweet={tweet} />
       </article>
-
+      <CreateTweet endpoint={`/tweets/${tweetId}/comment`} placeholder="Reply" />
       <Comments comments={comments} />
     </div>
   );
