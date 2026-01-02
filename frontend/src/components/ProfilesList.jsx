@@ -1,4 +1,4 @@
-import ProfileCard from "./ProfileCard";
+import ProfileCard from "./profile/ProfileCard";
 
 const ProfilesList = ({ profiles }) => {
   
