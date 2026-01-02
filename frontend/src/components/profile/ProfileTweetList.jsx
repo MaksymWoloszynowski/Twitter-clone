@@ -1,4 +1,4 @@
-import TweetCard from "../TweetCard";
+import TweetCard from "../tweet/TweetCard";
 
 const ProfileTweetList = ({ tweets }) => {
   if (tweets.length === 0) {
