@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api/api";
 import CreateTweet from "../components/CreateTweet";
-import TweetList from "../components/TweetList";
+import TweetList from "../components/tweet/TweetList";
 import useLogout from "../hooks/useLogout";
 import styles from "./Home.module.css";
 
@@ -68,7 +68,7 @@ export default function Home() {
         </button>
       </nav>
 
-      <CreateTweet onTweetCreated={() => fetchTweets()} />
+      <CreateTweet placeholder="What’s happening?"/>
 
       {loading && <p className={styles.info}>Loading...</p>}
       {error && <p className={styles.error}>{error}</p>}
