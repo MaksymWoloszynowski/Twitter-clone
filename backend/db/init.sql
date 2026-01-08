@@ -15,7 +15,7 @@ CREATE TABLE tweets (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     user_id UUID REFERENCES users(id) ON DELETE CASCADE,
     content TEXT NOT NULL,
-    created_at TIMESTAMP DEFAULT NOW()
+    created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
 -- ========== COMMENTS ==========
@@ -24,7 +24,7 @@ CREATE TABLE comments (
     tweet_id UUID REFERENCES tweets(id) ON DELETE CASCADE,
     user_id UUID REFERENCES users(id) ON DELETE CASCADE,
     content TEXT NOT NULL,
-    created_at TIMESTAMP DEFAULT NOW()
+    created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
 -- ========== LIKES ==========
@@ -39,4 +39,29 @@ CREATE TABLE follows (
     follower_id UUID REFERENCES users(id) ON DELETE CASCADE,
     following_id UUID REFERENCES users(id) ON DELETE CASCADE,
     PRIMARY KEY (follower_id, following_id)
+);
+
+-- ========== CONVERSATIONS ==========
+
+CREATE TABLE conversations (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid()
+);
+
+-- ========== CONVERSATIONS MEMBERS ==========
+
+CREATE TABLE conversation_members (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    conversation_id UUID REFERENCES conversations(id) ON DELETE CASCADE,
+    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    joined_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- ========== MESSAGES ==========
+CREATE TABLE messages (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    conversation_id UUID REFERENCES conversations(id) ON DELETE CASCADE,
+    sender_id UUID REFERENCES users(id),
+    receiver_id UUID REFERENCES users(id),
+    content TEXT NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT NOW()
 );
