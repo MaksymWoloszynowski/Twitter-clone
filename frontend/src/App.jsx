@@ -11,10 +11,11 @@ import UnauthorizedPage from "./pages/UnauthorizedPage";
 import PersistLogin from "./pages/PersistLogin";
 import Profile from "./pages/Profile";
 import AppLayout from "./layouts/AppLayout";
-import Chat from "./pages/Chat";
 import Notifications from "./pages/Notifications";
 import Tweet from "./pages/Tweet";
-import Follows from "./pages/Follows"
+import Follows from "./pages/Follows";
+import CurrentChat from "./components/chat/CurrentChat";
+import Chat from "./pages/Chat";
 
 function App() {
   return (
@@ -31,10 +32,18 @@ function App() {
           <Route element={<AppLayout />}>
             <Route path="home" element={<Home />} />
             <Route path="notifications" element={<Notifications />} />
-            <Route path="chat" element={<Chat />} />
+            <Route path="chat" element={<Chat />}>
+              <Route path=":id" element={<CurrentChat />} />
+            </Route>
             <Route path="profile/:profileId" element={<Profile />} />
-            <Route path="profile/:profileId/tweets/:tweetId" element={<Tweet />} />
-            <Route path="profile/:profileId/:followType" element={<Follows />} />
+            <Route
+              path="profile/:profileId/tweets/:tweetId"
+              element={<Tweet />}
+            />
+            <Route
+              path="profile/:profileId/:followType"
+              element={<Follows />}
+            />
           </Route>
         </Route>
 
