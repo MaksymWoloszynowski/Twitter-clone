@@ -27,18 +27,16 @@ const CurrentChat = () => {
     });
 
     socket.on("new-message", (msg) => {
-        console.log(msg);
-        
       setChatHistory((prev) => [...prev, msg]);
     });
 
     socket.on("error", () => {
       navigate("/chat");
     });
-
     return () => {
       socket.off("chat-history");
       socket.off("new-message");
+      socket.emit("leave-conversation", { conversationId: id });
     };
   }, [id]);
 
@@ -57,10 +55,13 @@ const CurrentChat = () => {
   return (
     <div className={styles.container}>
       <div className={styles.messages}>
+        <div>
+            <p className={styles.user}>fsdfsd</p>
+        </div>
         {chatHistory.map((msg) => {
           const isMe = msg.sender_id === auth.id;
           return (
-            <ChatMessage key={msg.id} isMe={isMe} content={msg.content} createdAt={msg.created_at} />
+            <ChatMessage key={msg.id} isMe={isMe} msg={msg} />
           );
         })}
         <div ref={messagesEndRef} />
