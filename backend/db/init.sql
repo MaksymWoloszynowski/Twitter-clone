@@ -63,5 +63,6 @@ CREATE TABLE messages (
     sender_id UUID REFERENCES users(id),
     receiver_id UUID REFERENCES users(id),
     content TEXT NOT NULL,
+    read BOOLEAN DEFAULT false,
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
