@@ -6,6 +6,7 @@ const Chat = () => {
   return (
     <div className={styles.container}>
       <div className={styles.contacts}>
+        <p>Chat</p>
         <ContactsList />
       </div>
       <div className={styles.chatContent}>
