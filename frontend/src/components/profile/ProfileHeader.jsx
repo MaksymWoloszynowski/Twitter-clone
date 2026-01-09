@@ -34,7 +34,7 @@ const ProfileHeader = ({ user, isMe, isFollowing, toggleFollow }) => {
         <div className={styles.profileImage} />
 
         <div>
-          <Mail onClick={handleMessage} />
+          {!isMe && <Mail onClick={handleMessage} />}
 
           {!isMe && (
             <button
