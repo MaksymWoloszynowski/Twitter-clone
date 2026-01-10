@@ -48,6 +48,7 @@ const Contact = ({ contact, isActive, onClick }) => {
         </div>
         <p className={styles.lastMessage}>{contact.last_message}</p>
       </div>
+      {contact.unread_count > 0 && <span className={styles.unread}>{contact.unread_count}</span>}
     </div>
   );
 };
