@@ -9,10 +9,10 @@ export const handleSocketConnection = (io, socket) => {
     try {
       const existing = await pool.query(
         `SELECT cm1.conversation_id
-            FROM conversation_members cm1
-            JOIN conversation_members cm2 ON cm1.conversation_id = cm2.conversation_id
-            WHERE cm1.user_id = $1 AND cm2.user_id = $2
-            LIMIT 1`,
+         FROM conversation_members cm1
+         JOIN conversation_members cm2 ON cm1.conversation_id = cm2.conversation_id
+         WHERE cm1.user_id = $1 AND cm2.user_id = $2
+         LIMIT 1`,
         [userId, receiverId]
       );
 
@@ -22,20 +22,18 @@ export const handleSocketConnection = (io, socket) => {
         const newConversation = await pool.query(
           `INSERT INTO conversations DEFAULT VALUES RETURNING id`
         );
-
         conversationId = newConversation.rows[0].id;
 
         await pool.query(
           `INSERT INTO conversation_members (conversation_id, user_id)
-         VALUES ($1, $2), ($1, $3)`,
-          [conversationId, socket.user.id, receiverId]
+           VALUES ($1, $2), ($1, $3)`,
+          [conversationId, userId, receiverId]
         );
       } else {
         conversationId = existing.rows[0].conversation_id;
       }
 
       socket.join(`conversation:${conversationId}`);
-
       socket.emit("chat-id", { conversationId });
     } catch (err) {
       console.error(err);
@@ -43,33 +41,50 @@ export const handleSocketConnection = (io, socket) => {
   });
 
   socket.on("join-conversation", async ({ conversationId }) => {
-    const member = await pool.query(
-      `SELECT 1 FROM conversation_members
-     WHERE conversation_id = $1 AND user_id = $2`,
-      [conversationId, userId]
-    );
+    try {
+      const member = await pool.query(
+        `SELECT 1 FROM conversation_members
+         WHERE conversation_id = $1 AND user_id = $2`,
+        [conversationId, userId]
+      );
 
-    if (member.rowCount === 0) {
-      socket.emit("error");
-      return;
+      if (member.rowCount === 0) {
+        socket.emit("error");
+        return;
+      }
+
+      socket.join(`conversation:${conversationId}`);
+
+      const history = await pool.query(
+        `SELECT id, sender_id, receiver_id, content, created_at, read
+         FROM messages
+         WHERE conversation_id = $1
+         ORDER BY created_at ASC`,
+        [conversationId]
+      );
+      io.to(`user:${socket.user.id}`).emit("update-read");
+      socket.emit("chat-history", history.rows);
+    } catch (err) {
+      console.error(err);
     }
+  });
 
-    socket.join(`conversation:${conversationId}`);
+  socket.on("mark-read", async (conversationId) => {
+    try {
+      const result = await pool.query(
+        `UPDATE messages 
+       SET read = true 
+       WHERE conversation_id = $1 
+         AND receiver_id = $2 
+         AND read = false
+       RETURNING id`,
+        [conversationId, socket.user.id]
+      );
 
-    await pool.query(
-      `UPDATE messages SET read = true WHERE conversation_id = $1 AND receiver_id = $2`,
-      [conversationId, socket.user.id]
-    );
-
-    const history = await pool.query(
-      `SELECT id, sender_id, content, created_at, read
-     FROM messages
-     WHERE conversation_id = $1
-     ORDER BY created_at ASC`,
-      [conversationId]
-    );
-
-    socket.emit("chat-history", history.rows);
+      updateUnread(io, socket.user.id);
+    } catch (err) {
+      console.log(err);
+    }
   });
 
   socket.on("get-contacts", async () => {
@@ -81,7 +96,7 @@ export const handleSocketConnection = (io, socket) => {
           (SELECT m.content FROM messages m WHERE m.conversation_id = cm1.conversation_id ORDER BY m.created_at DESC LIMIT 1) AS last_message,
           (SELECT m.read FROM messages m WHERE m.conversation_id = cm1.conversation_id ORDER BY m.created_at DESC LIMIT 1) AS last_read,
           (SELECT m.created_at FROM messages m WHERE m.conversation_id = cm1.conversation_id ORDER BY m.created_at DESC LIMIT 1) AS created_at,
-          (SELECT COUNT(*) FROM messages m WHERE m.conversation_id = cm1.conversation_id AND m.read = false ) AS unread_count
+          (SELECT COUNT(*) FROM messages m WHERE m.conversation_id = cm1.conversation_id AND m.read = false AND receiver_id = $1 ) AS unread_count
         FROM conversation_members cm1
         JOIN conversation_members cm2 
             ON cm1.conversation_id = cm2.conversation_id
@@ -92,7 +107,9 @@ export const handleSocketConnection = (io, socket) => {
         [socket.user.id]
       );
 
-      const filteredContacts = contacts.rows.filter(m => m.last_message !== null)
+      const filteredContacts = contacts.rows.filter(
+        (m) => m.last_message !== null
+      );
 
       socket.emit("contacts", filteredContacts);
     } catch (error) {
@@ -103,10 +120,9 @@ export const handleSocketConnection = (io, socket) => {
   socket.on("send-message", async ({ conversationId, content }) => {
     try {
       const receiver = await pool.query(
-        `SELECT user_id
-        FROM conversation_members
-        WHERE conversation_id = $1 AND user_id != $2`,
-        [conversationId, socket.user.id]
+        `SELECT user_id FROM conversation_members
+         WHERE conversation_id = $1 AND user_id != $2`,
+        [conversationId, userId]
       );
 
       const receiverId = receiver.rows[0].user_id;
@@ -114,15 +130,12 @@ export const handleSocketConnection = (io, socket) => {
       const sockets = io.sockets.adapter.rooms.get(
         `conversation:${conversationId}`
       );
-
       const read = sockets.size === 2;
-
-      console.log(sockets);
 
       await pool.query(
         `INSERT INTO messages (conversation_id, sender_id, receiver_id, content, read)
          VALUES ($1, $2, $3, $4, $5)`,
-        [conversationId, socket.user.id, receiverId, content, read]
+        [conversationId, userId, receiverId, content, read]
       );
 
       io.to(`conversation:${conversationId}`).emit("new-message", {
@@ -132,9 +145,14 @@ export const handleSocketConnection = (io, socket) => {
         created_at: new Date(),
         read,
       });
-    } catch (error) {
-      console.log(error);
+      updateUnread(io, receiverId);
+    } catch (err) {
+      console.error(err);
     }
+  });
+
+  socket.on("get-unread", () => {
+    updateUnread(io, socket.user.id);
   });
 
   socket.on("disconnect", (reason) => {
@@ -144,4 +162,21 @@ export const handleSocketConnection = (io, socket) => {
   socket.on("leave-conversation", ({ conversationId }) => {
     socket.leave(`conversation:${conversationId}`);
   });
+};
+
+const updateUnread = async (io, userId) => {
+  try {
+    const unreadCount = await pool.query(
+      `SELECT COUNT(*) AS count 
+       FROM messages
+       WHERE receiver_id = $1 AND read = false`,
+      [userId]
+    );
+
+    io.to(`user:${userId}`).emit("update-unread", {
+      count: unreadCount.rows[0].count,
+    });
+  } catch (err) {
+    console.error(err);
+  }
 };
