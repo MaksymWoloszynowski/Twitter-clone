@@ -44,7 +44,19 @@
 }
 
 .createdAt {
-  font-size: 0.7rem;
-  color: #657786;
-  opacity: 0.7;
+    font-size: 0.7rem;
+    color: #657786;
+    opacity: 0.7;
+}
+
+.unread {
+    background-color: #e0245e;
+    color: white;
+    border-radius: 999px;
+    height: 1.2rem;
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
 }

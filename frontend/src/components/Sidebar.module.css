@@ -2,14 +2,16 @@
   width: 16rem;
   padding: 1rem;
   border-right: 0.0625rem solid #e1e8ed;
-  min-height: 100vh;
+  height: 100vh;
   font-size: 1.5rem;
+  position: fixed;
 }
 
 .nav {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  height: 100%;
 }
 
 .link,
@@ -37,4 +39,61 @@
 svg {
   width: 1.5rem;
   height: 1.5rem;
+}
+
+.unread {
+  background-color: #e0245e;
+  color: white;
+  border-radius: 999px;
+  min-width: 1.2em;
+  height: 1.2em;
+  font-size: 0.7em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+}
+
+.bottom {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  padding: 0.2em;
+  margin-top: auto
+}
+
+.bottom:hover {
+  border-radius: 1em;
+  background-color: #e1e8ed;
+}
+
+.handle {
+  font-size: 0.875rem;
+  color: #657786;
+}
+
+.profileImage {
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 50%;
+  background-color: #ccd6dd;
+}
+
+.actionBox {
+  display: flex;
+  gap: 0.2em;
+  align-items: center;
+  color: #e0245e;
+  z-index: 999;
+  border: 1px solid;
+  border-radius: 2em;
+  padding: 0.2em;
+  cursor: pointer;
+}
+
+.actionBox:hover {
+  background-color: #e0245e;
+  color: white;
+  transition: background-color 0.2s;
 }

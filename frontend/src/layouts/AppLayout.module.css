@@ -6,5 +6,6 @@
 
 .content {
   border-right: 0.0625rem solid #e1e8ed;
-  width: 70ch;
+  width: 80vh;
+  margin-left: 16em;
 }
