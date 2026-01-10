@@ -12,11 +12,17 @@ const ChatMessage = ({ isMe, msg }) => {
       <p>{msg.content}</p>
       <div className={styles.data}>
         <p>
-        {new Date(msg.created_at).toLocaleTimeString("pl-PL", {
-          hour: "2-digit",
-          minute: "2-digit",
-        })} </p>
-       {isMe && (msg.read ? <CheckCheck className={styles.check} /> : <Check className={styles.check}/>)}
+          {new Date(msg.created_at).toLocaleTimeString("pl-PL", {
+            hour: "2-digit",
+            minute: "2-digit",
+          })}{" "}
+        </p>
+        {isMe &&
+          (msg.read ? (
+            <CheckCheck className={styles.check} />
+          ) : (
+            <Check className={styles.check} />
+          ))}
       </div>
     </div>
   );
