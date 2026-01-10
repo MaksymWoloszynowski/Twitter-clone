@@ -14,18 +14,17 @@ const ContactsList = () => {
       setContacts(newContacts);
     };
 
-    const handleNewMessage = () => {
-      socket.emit("get-contacts");
-    };
+    socket.on("update-unread", () => {
+      socket.emit("get-contacts");   
+    })
 
     socket.on("contacts", handleContacts);
-    socket.on("new-message", handleNewMessage);
 
     return () => {
       socket.off("contacts", handleContacts);
-      socket.off("new-message", handleNewMessage);
+       socket.off("get-contacts");
     };
-  }, []);
+  }, [socket]);
 
   return (
     <div>
