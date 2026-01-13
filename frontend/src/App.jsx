@@ -16,6 +16,7 @@ import Tweet from "./pages/Tweet";
 import Follows from "./pages/Follows";
 import CurrentChat from "./components/chat/CurrentChat";
 import Chat from "./pages/Chat";
+import Bookmarks from "./pages/Bookmarks";
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
           <Route element={<AppLayout />}>
             <Route path="home" element={<Home />} />
             <Route path="notifications" element={<Notifications />} />
+            <Route path="bookmarks" element={<Bookmarks />} />
             <Route path="chat" element={<Chat />}>
               <Route path=":id" element={<CurrentChat />} />
             </Route>
