@@ -4,33 +4,60 @@ import { useState } from "react";
 import { Bookmark, Heart, MessageCircle } from "lucide-react";
 
 const TweetStats = ({ tweet, onReply }) => {
+  console.log(tweet);
+
   const [likes, setLikes] = useState(Number(tweet.like_count));
   const [liked, setLiked] = useState(Boolean(tweet.liked_by_me));
+
+  const [bookmarks, setBookmarks] = useState(Number(tweet.bookmark_count));
+  const [bookmarked, setBookmarked] = useState(Boolean(tweet.bookmarked_by_me));
+
+  const toggleAction = async (count, status, endpoint, setCount, setStatus) => {
+    const prevCount = count;
+    const prevStatus = status;
+
+    setCount(prevCount + (prevStatus ? -1 : 1));
+    setStatus(!prevStatus);
+
+    try {
+      if (!prevStatus) {
+        await api.post(endpoint);
+      } else {
+        await api.delete(endpoint);
+      }
+    } catch {
+      setStatus(prevLiked);
+      setCount(prevLikes);
+    }
+  };
 
   const handleLike = async (e) => {
     e.stopPropagation();
 
-    const prevLiked = liked;
-    const prevLikes = likes;
-
-    setLiked(!prevLiked);
-    setLikes(prevLikes + (prevLiked ? -1 : 1));
-
-    try {
-      if (!prevLiked) {
-        await api.post(`/tweets/${tweet.tweet_id}/like`);
-      } else {
-        await api.delete(`/tweets/${tweet.tweet_id}/like`);
-      }
-    } catch {
-      setLiked(prevLiked);
-      setLikes(prevLikes);
-    }
+    toggleAction(
+      likes,
+      liked,
+      `/tweets/${tweet.tweet_id}/like`,
+      setLikes,
+      setLiked
+    );
   };
 
   const handleReply = (e) => {
     e.stopPropagation();
     onReply();
+  };
+
+  const handleBookmark = async (e) => {
+    e.stopPropagation();
+
+    toggleAction(
+      bookmarks,
+      bookmarked,
+      `/tweets/${tweet.tweet_id}/bookmark`,
+      setBookmarks,
+      setBookmarked
+    );
   };
 
   return (
@@ -44,8 +71,8 @@ const TweetStats = ({ tweet, onReply }) => {
         {likes}
       </span>
 
-      <span className={styles.bookmark}>
-        <Bookmark />
+      <span className={styles.bookmark} onClick={handleBookmark}>
+        <Bookmark className={bookmarked ? styles.bookmarked : ""} /> {bookmarks}
       </span>
     </footer>
   );
