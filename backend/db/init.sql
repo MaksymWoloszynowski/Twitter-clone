@@ -41,6 +41,13 @@ CREATE TABLE follows (
     PRIMARY KEY (follower_id, following_id)
 );
 
+-- ========== BOOKMARKS ==========
+CREATE TABLE bookmarks (
+    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    tweet_id UUID REFERENCES tweets(id) ON DELETE CASCADE,
+    PRIMARY KEY (user_id, tweet_id)
+);
+
 -- ========== CONVERSATIONS ==========
 
 CREATE TABLE conversations (
