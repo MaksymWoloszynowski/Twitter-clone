@@ -124,6 +124,41 @@ const getUserFollowers = async (req, res) => {
   }
 };
 
+const getBookmarks = async (req, res) => {
+  const userID = req.user.id;
+  try {
+    const result = await pool.query(`
+      SELECT
+        t.id AS tweet_id,
+        t.content,
+        t.created_at,
+        u.username,
+      (SELECT COUNT(*) FROM likes l WHERE l.tweet_id = t.id) AS like_count,
+      (SELECT COUNT(*) FROM comments c WHERE c.tweet_id = t.id) AS comment_count,
+      (SELECT COUNT(*) FROM bookmarks b WHERE b.tweet_id = t.id) AS bookmark_count,
+
+      EXISTS (
+        SELECT 1 FROM likes l2
+        WHERE l2.tweet_id = t.id AND l2.user_id = $1
+      ) AS liked_by_me,
+
+      EXISTS (
+        SELECT 1 FROM bookmarks b2
+        WHERE b2.tweet_id = t.id AND b2.user_id = $1
+      ) AS bookmarked_by_me
+      FROM bookmarks b
+      JOIN users u ON u.id = b.user_id
+      JOIN tweets t ON t.id = b.tweet_id
+      ORDER BY t.created_at DESC
+      `,[userID])
+
+    res.status(200).json(result.rows)
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to fetch bookmarks" });
+  }
+}
+
 const followUser = async (req, res) => {
   const { username } = req.params;
   const userID = req.user.id;
@@ -286,6 +321,7 @@ export default {
   getUserProfile,
   getUserFollowing,
   getUserFollowers,
+  getBookmarks,
   followUser,
   unfollowUser,
   editUserProfile,
