@@ -1,6 +1,6 @@
 import { NavLink } from "react-router-dom";
 import styles from "./Sidebar.module.css";
-import { Home, Bell, Mail, User, Ellipsis, LogOut } from "lucide-react";
+import { Home, Bell, Mail, User, Ellipsis, LogOut, Bookmark } from "lucide-react";
 import useAuth from "../hooks/useAuth";
 import useSocket from "../hooks/useSocket";
 import { useEffect } from "react";
@@ -12,7 +12,7 @@ const Sidebar = () => {
   const socket = useSocket();
   const [unreadMessagesCount, setUnreadMessagesCount] = useState(0);
   const [logoutVisible, setLogoutVisible] = useState(false);
-  const logout = useLogout()
+  const logout = useLogout();
 
   useEffect(() => {
     const handleUnread = (data) => setUnreadMessagesCount(data.count);
@@ -51,6 +51,14 @@ const Sidebar = () => {
           {unreadMessagesCount > 0 && (
             <span className={styles.unread}>{unreadMessagesCount}</span>
           )}
+        </NavLink>
+
+        <NavLink
+          to={"/bookmarks"}
+          className={({ isActive }) => (isActive ? styles.active : styles.link)}
+        >
+          <Bookmark />
+          <span>Bookmarks</span>
         </NavLink>
 
         <NavLink
