@@ -7,6 +7,7 @@ const router = Router();
 router.get("/users/:username", authenticateToken, userController.getUserProfile);
 router.get("/users/:username/following", authenticateToken, userController.getUserFollowing);
 router.get("/users/:username/followers", authenticateToken, userController.getUserFollowers);
+router.get("/users/:username/bookmarks", authenticateToken, userController.getBookmarks)
 
 router.post("/users/:username/follow", authenticateToken, userController.followUser);
 router.delete("/users/:username/follow", authenticateToken, userController.unfollowUser);

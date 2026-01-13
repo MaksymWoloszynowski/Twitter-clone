@@ -12,6 +12,7 @@ router.get("/tweets/:id/comments", authenticateToken, tweetsController.getTweetC
 router.post("/tweets/create", authenticateToken, tweetsController.createTweet);
 router.post("/tweets/:id/comment", authenticateToken, tweetsController.createComment);
 router.post("/tweets/:id/like", authenticateToken, tweetsController.likeTweet);
+router.post("/tweets/:id/bookmark", authenticateToken ,tweetsController.createBookmark)
 
 router.put("/tweets/:id", authenticateToken, tweetsController.editTweet);
 router.put("/tweets/:id/comments/:commentId", authenticateToken, tweetsController.editComment);
@@ -19,5 +20,6 @@ router.put("/tweets/:id/comments/:commentId", authenticateToken, tweetsControlle
 router.delete("/tweets/:id", authenticateToken, tweetsController.deleteTweet);
 router.delete("/tweets/:id/comments/:commentId", authenticateToken, tweetsController.deleteComment);
 router.delete("/tweets/:id/like", authenticateToken, tweetsController.unlikeTweet);
+router.delete("/tweets/:id/bookmark", authenticateToken, tweetsController.deleteBookmark)
 
 export default router;
