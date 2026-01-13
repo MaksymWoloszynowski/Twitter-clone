@@ -10,19 +10,21 @@ const getAllTweets = async (req, res) => {
         t.content,
         t.created_at,
         u.username,
-      COUNT(DISTINCT l.user_id) AS like_count,
-      COUNT(DISTINCT c.id) AS comment_count,
+      (SELECT COUNT(*) FROM likes l WHERE l.tweet_id = t.id) AS like_count,
+      (SELECT COUNT(*) FROM comments c WHERE c.tweet_id = t.id) AS comment_count,
+      (SELECT COUNT(*) FROM bookmarks b WHERE b.tweet_id = t.id) AS bookmark_count,
+
       EXISTS (
-          SELECT 1
-          FROM likes l2
-          WHERE l2.tweet_id = t.id
-            AND l2.user_id = $1
-      ) AS liked_by_me
+        SELECT 1 FROM likes l2
+        WHERE l2.tweet_id = t.id AND l2.user_id = $1
+      ) AS liked_by_me,
+
+      EXISTS (
+        SELECT 1 FROM bookmarks b2
+        WHERE b2.tweet_id = t.id AND b2.user_id = $1
+      ) AS bookmarked_by_me
       FROM tweets t
-      LEFT JOIN likes l ON l.tweet_id = t.id
-      LEFT JOIN comments c ON c.tweet_id = t.id
-      LEFT JOIN users u ON u.id = t.user_id
-      GROUP BY t.id, u.id
+      JOIN users u ON u.id = t.user_id
       ORDER BY t.created_at DESC;`,
       [userId]
     );
@@ -39,34 +41,31 @@ const getAllFollowingTweets = async (req, res) => {
   try {
     const result = await pool.query(
       `SELECT
-          t.id AS tweet_id,
-          t.content,
-          t.created_at,
-          u.username,
+        t.id AS tweet_id,
+        t.content,
+        t.created_at,
+        u.username,
 
-        COUNT(DISTINCT l.user_id) AS like_count,
-        COUNT(DISTINCT c.id) AS comment_count,
+        (SELECT COUNT(*) FROM likes l WHERE l.tweet_id = t.id) AS like_count,
+        (SELECT COUNT(*) FROM comments c WHERE c.tweet_id = t.id) AS comment_count,
+        (SELECT COUNT(*) FROM bookmarks b WHERE b.tweet_id = t.id) AS bookmark_count,
 
         EXISTS (
-            SELECT 1
-            FROM likes l2
-            WHERE l2.tweet_id = t.id
-              AND l2.user_id = $1
-        ) AS liked_by_me
+          SELECT 1 FROM likes l2
+          WHERE l2.tweet_id = t.id AND l2.user_id = $1
+        ) AS liked_by_me,
 
-        FROM tweets t
+        EXISTS (
+          SELECT 1 FROM bookmarks b2
+          WHERE b2.tweet_id = t.id AND b2.user_id = $1
+        ) AS bookmarked_by_me
 
-        JOIN follows f
+      FROM tweets t
+      JOIN users u ON u.id = t.user_id
+      JOIN follows f
           ON f.following_id = t.user_id
         AND f.follower_id = $1
-
-        JOIN users u ON u.id = t.user_id
-
-        LEFT JOIN likes l ON l.tweet_id = t.id
-        LEFT JOIN comments c ON c.tweet_id = t.id
-
-        GROUP BY t.id, u.id
-        ORDER BY t.created_at DESC;`,
+      ORDER BY t.created_at DESC;`,
       [userId]
     );
 
@@ -83,25 +82,28 @@ const getTweet = async (req, res) => {
 
   try {
     const result = await pool.query(
-      `SELECT 
-         t.id as tweet_id,
-         t.content,
-         t.created_at,
-         u.username,
-         COUNT(DISTINCT l.user_id) AS like_count,
-        COUNT(DISTINCT c.id) AS comment_count,
-         EXISTS (
-          SELECT 1
-          FROM likes l2
-          WHERE l2.tweet_id = t.id
-            AND l2.user_id = $1
-        ) AS liked_by_me
-       FROM tweets t
-       JOIN users u ON t.user_id = u.id
-       LEFT JOIN likes l ON l.tweet_id = t.id
-       LEFT JOIN comments c ON c.tweet_id = t.id
-       WHERE t.id = $2
-      GROUP BY t.id, u.id;`,
+      `SELECT
+        t.id AS tweet_id,
+        t.content,
+        t.created_at,
+        u.username,
+      (SELECT COUNT(*) FROM likes l WHERE l.tweet_id = t.id) AS like_count,
+      (SELECT COUNT(*) FROM comments c WHERE c.tweet_id = t.id) AS comment_count,
+      (SELECT COUNT(*) FROM bookmarks b WHERE b.tweet_id = t.id) AS bookmark_count,
+
+      EXISTS (
+        SELECT 1 FROM likes l2
+        WHERE l2.tweet_id = t.id AND l2.user_id = $1
+      ) AS liked_by_me,
+
+      EXISTS (
+        SELECT 1 FROM bookmarks b2
+        WHERE b2.tweet_id = t.id AND b2.user_id = $1
+      ) AS bookmarked_by_me
+      FROM tweets t
+      JOIN users u ON u.id = t.user_id
+      WHERE t.id = $2
+      ORDER BY t.created_at DESC;`,
       [userId, tweetId]
     );
 
@@ -292,6 +294,46 @@ const deleteComment = async (req, res) => {
   }
 };
 
+const createBookmark = async (req, res) => {
+  const userId = req.user.id;
+  const tweet_id = req.params.id;
+
+  try {
+    const result = await pool.query(
+      `INSERT INTO bookmarks (user_id, tweet_id)
+       VALUES ($1, $2)
+       ON CONFLICT DO NOTHING
+       RETURNING user_id`,
+      [userId, tweet_id]
+    );
+
+    if (result.rowCount === 0) {
+      return res.status(200).json({ message: "Already bookmarked" });
+    }
+
+    res.status(201).json({ message: "Successfully bookmarked a tweet" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to bookmark a tweet" });
+  }
+};
+
+const deleteBookmark = async (req, res) => {
+  const userId = req.user.id;
+  const tweet_id = req.params.id;
+  try {
+    await pool.query(
+      `DELETE FROM bookmarks WHERE user_id = $1 AND tweet_id = $2`,
+      [userId, tweet_id]
+    );
+
+    res.status(200).json({ message: "Bookmark deleted successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to delete a bookmark" });
+  }
+};
+
 const likeTweet = async (req, res) => {
   const tweet_id = req.params.id;
   const userID = req.user.id;
@@ -375,6 +417,8 @@ export default {
   createTweet,
   editTweet,
   deleteTweet,
+  createBookmark,
+  deleteBookmark,
   createComment,
   editComment,
   deleteComment,
