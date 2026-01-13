@@ -7,9 +7,6 @@ import useLogout from "../hooks/useLogout";
 import styles from "./Home.module.css";
 
 export default function Home() {
-  const navigate = useNavigate();
-  const logout = useLogout();
-
   const [tweets, setTweets] = useState([]);
   const [feedType, setFeedType] = useState("all");
   const [loading, setLoading] = useState(false);
@@ -44,11 +41,6 @@ export default function Home() {
   const handleFollowing = () => {
     setFeedType("following");
     fetchTweets("following");
-  };
-
-  const handleLogout = async () => {
-    await logout();
-    navigate("/");
   };
 
   return (
