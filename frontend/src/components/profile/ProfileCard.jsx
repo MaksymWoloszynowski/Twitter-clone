@@ -13,9 +13,9 @@ const ProfileCard = ({ profile }) => {
     try {
       setIsFollowing((prev) => !prev);
       if (isFollowing) {
-        await api.delete(`/users/${profile.username}/follow`);
+        await api.delete(`/users/${profile.username}/followers`);
       } else {
-        await api.post(`/users/${profile.username}/follow`);
+        await api.post(`/users/${profile.username}/followers`);
       }
     } catch (err) {
       console.error(err);

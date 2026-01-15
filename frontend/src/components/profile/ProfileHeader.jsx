@@ -3,10 +3,14 @@ import styles from "./ProfileHeader.module.css";
 import { useNavigate } from "react-router-dom";
 import useSocket from "../../hooks/useSocket";
 import { useEffect } from "react";
+import { useState } from "react";
+import EditModal from "../edit_profile/EditModal";
+import EditProfileForm from "../edit_profile/EditProfileForm";
 
 const ProfileHeader = ({ user, isMe, isFollowing, toggleFollow }) => {
   const navigate = useNavigate();
   const socket = useSocket();  
+  const [isEditing, setIsEditing] = useState(false)
   
   useEffect(() => {
     socket.on("chat-id", ({ conversationId }) => {
@@ -24,9 +28,6 @@ const ProfileHeader = ({ user, isMe, isFollowing, toggleFollow }) => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.header}>
-        <p className={styles.username}>{user.username}</p>
-      </div>
 
       <div className={styles.profileHeader} />
 
@@ -46,6 +47,8 @@ const ProfileHeader = ({ user, isMe, isFollowing, toggleFollow }) => {
               {isFollowing ? "Following" : "Follow"}
             </button>
           )}
+
+          {isMe && <button className={styles.editButton} onClick={() => setIsEditing(true)}>Edit profile</button>}
         </div>
       </div>
 
@@ -54,6 +57,12 @@ const ProfileHeader = ({ user, isMe, isFollowing, toggleFollow }) => {
         <p className={styles.handle}>@{user.username}</p>
         {user.bio && <p className={styles.bio}>{user.bio}</p>}
       </div>
+
+      {isEditing && (
+        <EditModal onClose={() => setIsEditing(false)}>
+          <EditProfileForm onClose={() => setIsEditing(false)} user={user} />
+        </EditModal>
+      )}
     </div>
   );
 };
