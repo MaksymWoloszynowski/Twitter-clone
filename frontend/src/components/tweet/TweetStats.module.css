@@ -12,6 +12,7 @@
   align-items: center;
   gap: 0.25rem;
   transition: color 0.15s ease;
+  cursor: pointer;
 }
 
 .actions span:hover {

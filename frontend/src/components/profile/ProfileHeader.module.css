@@ -48,6 +48,21 @@
     line-height: 1.4;
 }
 
+.editButton {
+    background: none;
+    border: 1px solid lightgray;
+    padding: 0.5em;
+    border-radius: 2.5em;
+    font-size: 1rem;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.editButton:hover {
+    background-color: lightgrey;
+    transition: background-color 0.2s;
+}
+
 .topRow {
     display: flex;
     justify-content: space-between;
