@@ -35,22 +35,24 @@ const getUserProfile = async (req, res) => {
         t.content,
         t.created_at,
         u.username,
-      COUNT(DISTINCT l.user_id) AS like_count,
-      COUNT(DISTINCT c.id) AS comment_count,
+      (SELECT COUNT(*) FROM likes l WHERE l.tweet_id = t.id) AS like_count,
+      (SELECT COUNT(*) FROM comments c WHERE c.tweet_id = t.id) AS comment_count,
+      (SELECT COUNT(*) FROM bookmarks b WHERE b.tweet_id = t.id) AS bookmark_count,
+
       EXISTS (
-          SELECT 1
-          FROM likes l2
-          WHERE l2.tweet_id = t.id
-            AND l2.user_id = $2
-      ) AS liked_by_me
+        SELECT 1 FROM likes l2
+        WHERE l2.tweet_id = t.id AND l2.user_id = $1
+      ) AS liked_by_me,
+
+      EXISTS (
+        SELECT 1 FROM bookmarks b2
+        WHERE b2.tweet_id = t.id AND b2.user_id = $1
+      ) AS bookmarked_by_me
       FROM tweets t
-      LEFT JOIN likes l ON l.tweet_id = t.id
-      LEFT JOIN comments c ON c.tweet_id = t.id
-      LEFT JOIN users u ON u.id = t.user_id
-      WHERE u.username = $1
-      GROUP BY t.id, u.id
+      JOIN users u ON u.id = t.user_id
+      WHERE u.username = $2
       ORDER BY t.created_at DESC;`,
-      [username, userId]
+      [userId, username]
     );
 
     res.status(200).json({
@@ -262,11 +264,11 @@ const editUserProfile = async (req, res) => {
       return res.status(400).json({ error: "Username cannot be empty" });
     }
 
-    // Sprawdzenie, czy nowy username jest już zajęty
     const existingUser = await pool.query(
       `SELECT id FROM users WHERE username = $1 AND id != $2`,
       [newUsername, userID]
     );
+
     if (existingUser.rowCount > 0) {
       return res.status(400).json({ error: "Username already taken" });
     }
