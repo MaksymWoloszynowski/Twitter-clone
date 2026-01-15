@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
 import api from "../api/api";
 
-const useFollow = ({ user }) => {
-
-  const [isFollowing, setIsFollowing] = useState(false);
-  const [followers, setFollowers] = useState(0);
+const useFollow = (user) => {
+  const [isFollowing, setIsFollowing] = useState(user.followed_by_me);
+  const [followers, setFollowers] = useState(user.followers_count);
 
   useEffect(() => {
     if (!user) return;
@@ -18,14 +17,15 @@ const useFollow = ({ user }) => {
     setFollowers((prev) => prev + (!isFollowing ? 1 : -1));
     try {
       if (isFollowing) {
-        await api.delete(`/users/${user.username}/follow`);
+        await api.delete(`/users/${user.username}/followers`);
       } else {
-        await api.post(`/users/${user.username}/follow`);
+        await api.post(`/users/${user.username}/followers`);
       }
     } catch (err) {
       console.error(err);
     }
   };
+  
   return {
     isFollowing,
     followers,
