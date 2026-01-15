@@ -1,22 +1,23 @@
 import { Routes, Route } from "react-router-dom";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import Home from "./pages/Home";
-import Landing from "./pages/Landing";
-import NotFound from "./pages/NotFound";
+import Login from "./pages/login/Login";
+import Register from "./pages/register/Register";
+import Home from "./pages/home/Home";
+import Landing from "./pages/landing/Landing";
+import NotFound from "./pages/not_found/NotFound";
 import RequireAuth from "./components/RequireAuth";
 import AdminPage from "./pages/AdminPage";
 import PublicLayout from "./layouts/PublicLayout";
-import UnauthorizedPage from "./pages/UnauthorizedPage";
+import UnauthorizedPage from "./pages/unauthorized/UnauthorizedPage";
 import PersistLogin from "./pages/PersistLogin";
-import Profile from "./pages/Profile";
+import Profile from "./pages/profile/Profile";
 import AppLayout from "./layouts/AppLayout";
-import Notifications from "./pages/Notifications";
-import Tweet from "./pages/Tweet";
-import Follows from "./pages/Follows";
+import Notifications from "./pages/notifications/Notifications";
+import Tweet from "./pages/tweet/Tweet";
+import Follows from "./pages/follows/Follows";
 import CurrentChat from "./components/chat/CurrentChat";
-import Chat from "./pages/Chat";
-import Bookmarks from "./pages/Bookmarks";
+import Chat from "./pages/chat/Chat";
+import Bookmarks from "./pages/bookmarks/Bookmarks";
+import Explore from "./pages/explore/Explore";
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
         <Route element={<RequireAuth allowedRoles={["user", "admin"]} />}>
           <Route element={<AppLayout />}>
             <Route path="home" element={<Home />} />
+            <Route path="explore" element={<Explore />} />
             <Route path="notifications" element={<Notifications />} />
             <Route path="bookmarks" element={<Bookmarks />} />
             <Route path="chat" element={<Chat />}>
