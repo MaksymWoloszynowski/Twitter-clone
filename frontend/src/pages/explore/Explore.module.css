@@ -1,5 +1,5 @@
 .container {
-    width: 70ch;
+  min-height: 100vh;
 }
 
 .tabs {
@@ -25,4 +25,12 @@
 .tabs button.active {
     color: black;
     border-bottom: 3px solid #1da1f2;
+}
+
+.topBar {
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
 }

@@ -1,9 +1,9 @@
 import { useRef, useState, useEffect } from "react";
-import api from "../api/api.js";
+import api from "../../api/api.js";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import styles from "./Register.module.css";
-import useAuth from "../hooks/useAuth.js";
+import useAuth from "../../hooks/useAuth.js";
 
 const USER_REGEX = /^[A-Za-z][A-Za-z0-9-_]{3,24}$/;
 const PASSWORD_REGEX =

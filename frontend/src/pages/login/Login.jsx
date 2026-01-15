@@ -1,10 +1,10 @@
 import { useRef, useState, useEffect, useContext } from "react";
-import AuthContext from "../context/AuthContext.jsx";
-import api from "../api/api.js";
+import AuthContext from "../../context/AuthContext.jsx";
+import api from "../../api/api.js";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import styles from "./Login.module.css";
-import useAuth from "../hooks/useAuth.js";
+import useAuth from "../../hooks/useAuth.js";
 
 const Login = () => {
   const { setAuth } = useAuth();

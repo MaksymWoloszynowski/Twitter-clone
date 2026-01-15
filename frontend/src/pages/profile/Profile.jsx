@@ -1,11 +1,12 @@
 import { useParams } from "react-router-dom";
-import api from "../api/api";
+import api from "../../api/api";
 import { useEffect, useState } from "react";
-import ProfileHeader from "../components/profile/ProfileHeader";
-import ProfileStats from "../components/profile/ProfileStats";
-import ProfileTweetList from "../components/profile/ProfileTweetList";
-import useAuth from "../hooks/useAuth";
-import useFollow from "../hooks/useFollow";
+import ProfileHeader from "../../components/profile/ProfileHeader";
+import ProfileStats from "../../components/profile/ProfileStats";
+import ProfileTweetList from "../../components/profile/ProfileTweetList";
+import useAuth from "../../hooks/useAuth";
+import useFollow from "../../hooks/useFollow";
+import TitleTop from "../../components/TitleTop";
 
 const Profile = () => {
   const { profileId } = useParams();
@@ -38,6 +39,7 @@ const Profile = () => {
 
   return (
     <div>
+      <TitleTop title={user.username} />
       <ProfileHeader
         user={user}
         profileId={profileId}

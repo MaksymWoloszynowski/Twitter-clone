@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import api from "../api/api";
-import Comments from "../components/Comments";
+import api from "../../api/api";
+import Comments from "../../components/Comments";
 import styles from "./Tweet.module.css";
-import CreateTweet from "../components/CreateTweet";
-import TweetStats from "../components/tweet/TweetStats";
+import CreateTweet from "../../components/CreateTweet";
+import TweetStats from "../../components/tweet/TweetStats";
+import TitleTop from "../../components/TitleTop";
 
 const Tweet = () => {
   const { tweetId } = useParams();
@@ -63,6 +64,7 @@ const Tweet = () => {
 
   return (
     <div className={styles.container}>
+      <TitleTop title={"Tweet"} />
       <article className={styles.tweet}>
         <header className={styles.header}>
           <Link to={`/profile/${tweet.username}`}><div className={styles.avatar} /></Link>

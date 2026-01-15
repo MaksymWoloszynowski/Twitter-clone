@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import api from "../api/api";
+import api from "../../api/api";
 import { useParams, useNavigate } from "react-router-dom";
-import ProfilesList from "../components/ProfilesList";
+import ProfilesList from "../../components/ProfilesList";
 import styles from "./Follows.module.css";
+import TitleTop from "../../components/TitleTop";
 
 const Follows = () => {
   const { profileId, followType } = useParams();
@@ -37,6 +38,7 @@ const Follows = () => {
 
   return (
     <div className={styles.container}>
+      <TitleTop title={profileId} />
       <nav className={styles.tabs}>
         <button
           onClick={() => fetchProfiles("followers")}

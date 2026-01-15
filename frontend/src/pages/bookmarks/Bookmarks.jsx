@@ -1,9 +1,11 @@
 import { useEffect } from "react";
 import { useState } from "react";
-import api from "../api/api";
-import useAuth from "../hooks/useAuth";
-import TweetList from "../components/tweet/TweetList";
-import styles from "./Bookmarks.module.css"
+import api from "../../api/api";
+import useAuth from "../../hooks/useAuth";
+import TweetList from "../../components/tweet/TweetList";
+import styles from "./Bookmarks.module.css";
+import BackButton from "../../components/BackButton";
+import TitleTop from "../../components/TitleTop";
 
 const Bookmarks = () => {
   const [bookmarks, setBookmarks] = useState([]);
@@ -30,6 +32,7 @@ const Bookmarks = () => {
 
   return (
     <div>
+      <TitleTop title={"Bookmarks"} />
       {loading && <p className={styles.info}>Loading...</p>}
       {error && <p className={styles.error}>{error}</p>}
 
