@@ -9,10 +9,10 @@ router.get("/users/:username/following", authenticateToken, userController.getUs
 router.get("/users/:username/followers", authenticateToken, userController.getUserFollowers);
 router.get("/users/:username/bookmarks", authenticateToken, userController.getBookmarks)
 
-router.post("/users/:username/follow", authenticateToken, userController.followUser);
-router.delete("/users/:username/follow", authenticateToken, userController.unfollowUser);
+router.post("/users/:username/followers", authenticateToken, userController.followUser);
+router.delete("/users/:username/followers", authenticateToken, userController.unfollowUser);
 
-router.put("/users/:username/edit", authenticateToken, userController.editUserProfile);
+router.put("/users/:username", authenticateToken, userController.editUserProfile);
 router.delete("/users/:username", authenticateToken, userController.deleteUser);
 
 export default router;
