@@ -6,20 +6,22 @@ const router = Router();
 
 router.get("/tweets", authenticateToken, tweetsController.getAllTweets);
 router.get("/tweets/following", authenticateToken, tweetsController.getAllFollowingTweets);
+
 router.get("/tweets/:id", authenticateToken, tweetsController.getTweet);
-router.get("/tweets/:id/comments", authenticateToken, tweetsController.getTweetComments);
-
-router.post("/tweets/create", authenticateToken, tweetsController.createTweet);
-router.post("/tweets/:id/comment", authenticateToken, tweetsController.createComment);
-router.post("/tweets/:id/like", authenticateToken, tweetsController.likeTweet);
-router.post("/tweets/:id/bookmark", authenticateToken ,tweetsController.createBookmark)
-
+router.post("/tweets", authenticateToken, tweetsController.createTweet);
 router.put("/tweets/:id", authenticateToken, tweetsController.editTweet);
-router.put("/tweets/:id/comments/:commentId", authenticateToken, tweetsController.editComment);
-
 router.delete("/tweets/:id", authenticateToken, tweetsController.deleteTweet);
-router.delete("/tweets/:id/comments/:commentId", authenticateToken, tweetsController.deleteComment);
-router.delete("/tweets/:id/like", authenticateToken, tweetsController.unlikeTweet);
-router.delete("/tweets/:id/bookmark", authenticateToken, tweetsController.deleteBookmark)
+
+router.get("/tweets/:id/comments", authenticateToken, tweetsController.getTweetComments);
+router.post("/tweets/:id/comments", authenticateToken, tweetsController.createComment);
+
+router.put("/comments/:commentId", authenticateToken, tweetsController.editComment);
+router.delete("/comments/:commentId", authenticateToken, tweetsController.deleteComment);
+
+router.post("/tweets/:id/likes", authenticateToken, tweetsController.likeTweet);
+router.delete("/tweets/:id/likes", authenticateToken, tweetsController.unlikeTweet);
+
+router.post("/tweets/:id/bookmarks", authenticateToken, tweetsController.createBookmark);
+router.delete("/tweets/:id/bookmarks", authenticateToken, tweetsController.deleteBookmark);
 
 export default router;
