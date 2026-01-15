@@ -1,0 +1,11 @@
+.backButton {
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.backButton:hover {
+    background-color: lightgray;
+    border-radius: 999px;
+    transition: background-color 0.2s;
+}
