@@ -4,8 +4,6 @@ import { useState } from "react";
 import { Bookmark, Heart, MessageCircle } from "lucide-react";
 
 const TweetStats = ({ tweet, onReply }) => {
-  console.log(tweet);
-
   const [likes, setLikes] = useState(Number(tweet.like_count));
   const [liked, setLiked] = useState(Boolean(tweet.liked_by_me));
 

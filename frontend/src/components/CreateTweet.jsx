@@ -4,7 +4,7 @@ import styles from "./CreateTweet.module.css";
 
 const MAX_LENGTH = 280;
 
-const CreateTweet = ({ endpoint = "/tweets/create", placeholder }) => {
+const CreateTweet = ({ endpoint = "/tweets", placeholder }) => {
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(false);
 
