@@ -24,8 +24,8 @@ const TweetStats = ({ tweet, onReply }) => {
         await api.delete(endpoint);
       }
     } catch {
-      setStatus(prevLiked);
-      setCount(prevLikes);
+      setStatus(prevStatus);
+      setCount(prevCount);
     }
   };
 
@@ -35,7 +35,7 @@ const TweetStats = ({ tweet, onReply }) => {
     toggleAction(
       likes,
       liked,
-      `/tweets/${tweet.tweet_id}/like`,
+      `/tweets/${tweet.tweet_id}/likes`,
       setLikes,
       setLiked
     );
@@ -52,7 +52,7 @@ const TweetStats = ({ tweet, onReply }) => {
     toggleAction(
       bookmarks,
       bookmarked,
-      `/tweets/${tweet.tweet_id}/bookmark`,
+      `/tweets/${tweet.tweet_id}/bookmarks`,
       setBookmarks,
       setBookmarked
     );
