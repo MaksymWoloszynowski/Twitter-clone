@@ -8,7 +8,7 @@ const ProfileCard = ({ profile }) => {
   const { auth } = useAuth();
 
   const isMe = profile.id === auth.id;
-
+  
   const toggleFollow = async () => {
     try {
       setIsFollowing((prev) => !prev);

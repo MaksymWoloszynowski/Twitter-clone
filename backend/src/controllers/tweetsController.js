@@ -102,8 +102,7 @@ const getTweet = async (req, res) => {
       ) AS bookmarked_by_me
       FROM tweets t
       JOIN users u ON u.id = t.user_id
-      WHERE t.id = $2
-      ORDER BY t.created_at DESC;`,
+      WHERE t.id = $2`,
       [userId, tweetId]
     );
 
@@ -145,14 +144,30 @@ const getTweetComments = async (req, res) => {
 const createTweet = async (req, res) => {
   const { content } = req.body;
   const userID = req.user.id;
+  const io = req.app.get("io");
 
   try {
+    if (!content || !content.trim()) {
+      return res.status(400).json({ error: "Tweet cannot be empty" });
+    }
+
     const result = await pool.query(
       `INSERT INTO tweets (user_id, content) 
-   VALUES ($1, $2) 
-   RETURNING id, user_id, content, created_at`,
+      VALUES ($1, $2) 
+      RETURNING id, user_id, content, created_at`,
       [userID, content]
     );
+
+    const followers = await pool.query(
+      `SELECT follower_id FROM follows WHERE following_id = $1`,
+      [userID]
+    );
+
+    followers.rows.forEach(({ follower_id }) => {
+      io.to(`user:${follower_id}`).emit("feed-update", {
+        authorId: userID,
+      });
+    });
 
     res.status(201).json({ tweet: result.rows[0] });
   } catch (error) {

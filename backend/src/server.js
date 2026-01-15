@@ -41,6 +41,8 @@ io.use((socket, next) => {
   }
 });
 
+app.set("io", io)
+
 server.listen(3000);
 
 io.on("connection", socket => {
