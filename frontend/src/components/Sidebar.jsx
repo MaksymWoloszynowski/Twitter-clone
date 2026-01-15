@@ -1,6 +1,6 @@
 import { NavLink } from "react-router-dom";
 import styles from "./Sidebar.module.css";
-import { Home, Bell, Mail, User, Ellipsis, LogOut, Bookmark } from "lucide-react";
+import { Home, Bell, Mail, User, Ellipsis, LogOut, Bookmark, Search } from "lucide-react";
 import useAuth from "../hooks/useAuth";
 import useSocket from "../hooks/useSocket";
 import { useEffect } from "react";
@@ -32,6 +32,14 @@ const Sidebar = () => {
         >
           <Home />
           <span>Home</span>
+        </NavLink>
+
+        <NavLink
+          to="/explore"
+          className={({ isActive }) => (isActive ? styles.active : styles.link)}
+        >
+          <Search />
+          <span>Explore</span>
         </NavLink>
 
         <NavLink
