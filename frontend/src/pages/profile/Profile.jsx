@@ -5,7 +5,6 @@ import ProfileHeader from "../../components/profile/ProfileHeader";
 import ProfileStats from "../../components/profile/ProfileStats";
 import ProfileTweetList from "../../components/profile/ProfileTweetList";
 import useAuth from "../../hooks/useAuth";
-import useFollow from "../../hooks/useFollow";
 import TitleTop from "../../components/TitleTop";
 
 const Profile = () => {
@@ -15,8 +14,6 @@ const Profile = () => {
   const [user, setUser] = useState(null);
   const [userTweets, setUserTweets] = useState([]);
   const [loading, setLoading] = useState(true);
-  
-  const { isFollowing, followers, toggleFollow } = useFollow({ user });  
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -43,11 +40,9 @@ const Profile = () => {
       <ProfileHeader
         user={user}
         profileId={profileId}
-        isMe={auth?.id === user.user_id}
-        isFollowing={isFollowing}
-        toggleFollow={toggleFollow}
+        isMe={auth?.id && auth.id === user.user_id}
       />
-      <ProfileStats user={user} followers={followers} />
+      <ProfileStats user={user} />
       <ProfileTweetList tweets={userTweets} />
     </div>
   );
