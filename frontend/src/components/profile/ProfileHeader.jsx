@@ -6,12 +6,14 @@ import { useEffect } from "react";
 import { useState } from "react";
 import EditModal from "../edit_profile/EditModal";
 import EditProfileForm from "../edit_profile/EditProfileForm";
+import useFollow from "../../hooks/useFollow";
 
-const ProfileHeader = ({ user, isMe, isFollowing, toggleFollow }) => {
+const ProfileHeader = ({ user, isMe }) => {
   const navigate = useNavigate();
-  const socket = useSocket();  
-  const [isEditing, setIsEditing] = useState(false)
-  
+  const socket = useSocket();
+  const [isEditing, setIsEditing] = useState(false);
+  const { isFollowing, toggleFollow } = useFollow(user);
+
   useEffect(() => {
     socket.on("chat-id", ({ conversationId }) => {
       navigate(`/chat/${conversationId}`);
@@ -28,7 +30,6 @@ const ProfileHeader = ({ user, isMe, isFollowing, toggleFollow }) => {
 
   return (
     <div className={styles.container}>
-
       <div className={styles.profileHeader} />
 
       <div className={styles.topRow}>
@@ -40,7 +41,7 @@ const ProfileHeader = ({ user, isMe, isFollowing, toggleFollow }) => {
           {!isMe && (
             <button
               className={`${styles.followBtn} ${
-                isFollowing ? styles.following : ""
+                user.followed_by_me ? styles.following : ""
               }`}
               onClick={toggleFollow}
             >
@@ -48,7 +49,14 @@ const ProfileHeader = ({ user, isMe, isFollowing, toggleFollow }) => {
             </button>
           )}
 
-          {isMe && <button className={styles.editButton} onClick={() => setIsEditing(true)}>Edit profile</button>}
+          {isMe && (
+            <button
+              className={styles.editButton}
+              onClick={() => setIsEditing(true)}
+            >
+              Edit profile
+            </button>
+          )}
         </div>
       </div>
 
