@@ -4,7 +4,8 @@
   border-right: 0.0625rem solid #e1e8ed;
   height: 100vh;
   font-size: 1.5rem;
-  position: fixed;
+  position: sticky;
+  top: 0;
 }
 
 .nav {

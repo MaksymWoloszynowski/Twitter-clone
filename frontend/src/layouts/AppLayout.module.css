@@ -7,5 +7,8 @@
 .content {
   border-right: 0.0625rem solid #e1e8ed;
   width: 80vh;
-  margin-left: 16em;
+}
+
+.container {
+  margin: 1em;
 }

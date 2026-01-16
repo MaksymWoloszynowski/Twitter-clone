@@ -1,21 +1,17 @@
-.container {
-    margin: 1rem;
-}
-
 .searchBox {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 0.75rem;
-  border: 1px solid rgb(207, 217, 222);
-  border-radius: 9999px;
-  color: rgb(207, 217, 222);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid rgb(207, 217, 222);
+    border-radius: 9999px;
+    color: rgb(207, 217, 222);
 }
 
 .searchBox input {
-  border: none;
-  background: transparent;
-  outline: none;
-  width: 100%;
-  font-size: 1rem;
+    border: none;
+    background: transparent;
+    outline: none;
+    width: 100%;
+    font-size: 1rem;
 }
