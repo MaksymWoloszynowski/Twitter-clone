@@ -37,6 +37,7 @@ const CurrentChat = () => {
     return () => {
       socket.off("chat-history");
       socket.off("new-message");
+      socket.emit("leave-conversation", { conversationId: id });
     };
   }, [id]);
 

@@ -18,6 +18,9 @@ import CurrentChat from "./components/chat/CurrentChat";
 import Chat from "./pages/chat/Chat";
 import Bookmarks from "./pages/bookmarks/Bookmarks";
 import Explore from "./pages/explore/Explore";
+import Settings from "./pages/settings/Settings";
+import SettingsAccount from "./components/settings/SettingsAccount";
+import SettingsLayout from "./layouts/SettingsLayout";
 
 function App() {
   return (
@@ -36,6 +39,7 @@ function App() {
             <Route path="explore" element={<Explore />} />
             <Route path="notifications" element={<Notifications />} />
             <Route path="bookmarks" element={<Bookmarks />} />
+
             <Route path="chat" element={<Chat />}>
               <Route path=":id" element={<CurrentChat />} />
             </Route>
@@ -48,6 +52,11 @@ function App() {
               path="profile/:profileId/:followType"
               element={<Follows />}
             />
+          </Route>
+          <Route element={<SettingsLayout />}>
+            <Route path="settings" element={<Settings />}>
+              <Route path="account" element={<SettingsAccount />} />
+            </Route>
           </Route>
         </Route>
 

@@ -4,10 +4,21 @@ import styles from "./TweetCard.module.css";
 import TweetStats from "./TweetStats";
 import ReplyModal from "../reply/ReplyModal";
 import ReplyCard from "../reply/ReplyCard";
+import { Ellipsis } from "lucide-react";
+import TweetOptions from "./TweetOptions";
+import { useRef } from "react";
+import useClickOutside from "../../hooks/useClickOutside";
 
 const TweetCard = ({ tweet }) => {
   const navigate = useNavigate();
   const [isReplying, setIsReplying] = useState(false);
+  const [showOptions, setShowOptions] = useState(false);
+
+  const optionsRef = useRef("options");
+
+  useClickOutside(optionsRef, () => {
+    setShowOptions(false)
+  })
 
   const timeAgo = (date) => {
     const seconds = Math.floor((Date.now() - new Date(date)) / 1000);
@@ -28,6 +39,11 @@ const TweetCard = ({ tweet }) => {
     navigate(`/profile/${tweet.username}`);
   };
 
+  const handleOptions = (e) => {
+    e.stopPropagation();
+    setShowOptions((prev) => !prev);
+  };
+
   return (
     <>
       <article className={styles.card} onClick={handleClick}>
@@ -35,18 +51,22 @@ const TweetCard = ({ tweet }) => {
 
         <div className={styles.content}>
           <header className={styles.header}>
-            <span onClick={handleProfileClick} className={styles.username}>
-              {tweet.username}
-            </span>
-            <span className={styles.handle}>@{tweet.username}</span>
-            <span className={styles.dot}>·</span>
-            <p className={styles.time}>{timeAgo(tweet.created_at)}</p>
+            <div>
+              <span onClick={handleProfileClick} className={styles.username}>
+                {tweet.username}
+              </span>
+              <span className={styles.handle}>@{tweet.username}</span>
+              <span className={styles.dot}>·</span>
+              <span className={styles.time}>{timeAgo(tweet.created_at)}</span>
+            </div>
+            <Ellipsis ref={optionsRef} onClick={handleOptions} />
           </header>
 
           <p className={styles.text}>{tweet.content}</p>
 
           <TweetStats tweet={tweet} onReply={() => setIsReplying(true)} />
         </div>
+        {showOptions && <TweetOptions tweet={tweet} setShowOptions={setShowOptions}/>}
       </article>
 
       {isReplying && (

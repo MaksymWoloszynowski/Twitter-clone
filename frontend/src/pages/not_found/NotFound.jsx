@@ -1,9 +1,18 @@
-import React from 'react'
+import { useNavigate } from "react-router-dom";
+import styles from "./NotFound.module.css";
 
 const NotFound = () => {
-  return (
-    <div>NotFound</div>
-  )
-}
+  const navigate = useNavigate();
 
-export default NotFound
+  return (
+    <div className={styles.wrapper}>
+      <h1 className={styles.code}>404</h1>
+      <p className={styles.text}>This page doesn’t exist</p>
+      <button className={styles.button} onClick={() => navigate("/home")}>
+        Go home
+      </button>
+    </div>
+  );
+};
+
+export default NotFound;

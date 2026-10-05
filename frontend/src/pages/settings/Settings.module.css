@@ -1,0 +1,37 @@
+.container {
+    display: flex;
+    height: 100%;
+    min-height: 80vh;
+}
+
+.sidebar {
+    width: 20vw;
+    border-right: 1px solid #e6ecf0;
+}
+
+.content {
+    flex: 1;
+    padding: 2rem;
+}
+
+.item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    text-decoration: none;
+    color: #14171a;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+}
+
+.item:hover {
+    cursor: pointer;
+    background-color: #e6ecf0;
+}
+
+.icon {
+    width: 1.1rem;
+    height: 1.1rem;
+    color: #657786;
+}

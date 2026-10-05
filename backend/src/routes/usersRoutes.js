@@ -13,6 +13,6 @@ router.post("/users/:username/followers", authenticateToken, userController.foll
 router.delete("/users/:username/followers", authenticateToken, userController.unfollowUser);
 
 router.put("/users/:username", authenticateToken, userController.editUserProfile);
-router.delete("/users/:username", authenticateToken, userController.deleteUser);
+router.delete("/users/me", authenticateToken, userController.deleteUser);
 
 export default router;

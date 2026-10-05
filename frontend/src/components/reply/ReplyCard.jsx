@@ -22,7 +22,7 @@ const ReplyCard = ({ tweet, onClose }) => {
       </article>
 
       <CreateTweet
-        endpoint={`tweets/${tweet.tweet_id}/comment`}
+        endpoint={`tweets/${tweet.tweet_id}/comments`}
         placeholder="Reply"
       />
     </div>

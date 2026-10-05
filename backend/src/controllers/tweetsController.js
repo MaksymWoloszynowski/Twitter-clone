@@ -151,6 +151,10 @@ const createTweet = async (req, res) => {
       return res.status(400).json({ error: "Tweet cannot be empty" });
     }
 
+    if (content.length > 280) {
+      return res.status(400).json({ error: "Exceeded tweet length" });
+    }
+
     const result = await pool.query(
       `INSERT INTO tweets (user_id, content) 
       VALUES ($1, $2) 
@@ -216,11 +220,15 @@ const createComment = async (req, res) => {
   const userID = req.user.id;
   const { content } = req.body;
 
-  if (!content || content.trim() === "") {
-    return res.status(400).json({ error: "Comment cannot be empty" });
-  }
-
   try {
+    if (!content || content.trim() === "") {
+      return res.status(400).json({ error: "Comment cannot be empty" });
+    }
+
+    if (content.length > 280) {
+      return res.status(400).json({ error: "Exceeded tweet length" });
+    }
+
     const tweetExists = await pool.query(
       `SELECT id FROM tweets WHERE id = $1`,
       [tweet_id]

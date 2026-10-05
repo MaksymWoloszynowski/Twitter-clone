@@ -15,8 +15,8 @@ router.delete("/tweets/:id", authenticateToken, tweetsController.deleteTweet);
 router.get("/tweets/:id/comments", authenticateToken, tweetsController.getTweetComments);
 router.post("/tweets/:id/comments", authenticateToken, tweetsController.createComment);
 
-router.put("/comments/:commentId", authenticateToken, tweetsController.editComment);
-router.delete("/comments/:commentId", authenticateToken, tweetsController.deleteComment);
+router.put("/tweets/:id/comments", authenticateToken, tweetsController.editComment);
+router.delete("/tweets/:id/comments", authenticateToken, tweetsController.deleteComment);
 
 router.post("/tweets/:id/likes", authenticateToken, tweetsController.likeTweet);
 router.delete("/tweets/:id/likes", authenticateToken, tweetsController.unlikeTweet);

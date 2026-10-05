@@ -1,22 +1,16 @@
 import app from "./app.js"
 import { Server } from "socket.io"
-import https from "https"
+import http from "http"
 import { handleSocketConnection } from "./ws.js";
-import { verifyJWT } from "../utils/verifyJWT.js";
+import { verifyJWT } from "./utils/verifyJWT.js";
 import cookie from "cookie";
-import fs from "fs"
 
-const options = {
-  key: fs.readFileSync(process.env.TLS_KEY_PATH),
-  cert: fs.readFileSync(process.env.TLS_CERT_PATH)
-}
-
-const server = https.createServer(options, app);
+const server = http.createServer(app);
 
 const io = new Server(server, {
     cors: {
         origin: "http://localhost:5173",
-        credentials: true
+        credentials: true,
     }
 })
 

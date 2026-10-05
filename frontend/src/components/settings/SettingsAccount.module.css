@@ -1,0 +1,48 @@
+.container {
+    max-width: 600px;
+}
+
+.title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
+}
+
+.dangerZone {
+    border: 1px solid #f1aeb5;
+    background-color: #fff5f5;
+    border-radius: 12px;
+    padding: 1.5rem;
+}
+
+.dangerZone h3 {
+    color: #d1242f;
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+}
+
+.dangerZone p {
+    font-size: 0.95rem;
+    color: #5f6368;
+    margin-bottom: 1.25rem;
+}
+
+.deleteButton {
+    background-color: #d1242f;
+    color: white;
+    border: none;
+    padding: 0.6rem 1.25rem;
+    border-radius: 9999px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.deleteButton:hover {
+    background-color: #b71c1c;
+}
+
+.deleteButton:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}

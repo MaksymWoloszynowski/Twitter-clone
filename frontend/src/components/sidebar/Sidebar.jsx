@@ -1,11 +1,21 @@
 import { NavLink } from "react-router-dom";
 import styles from "./Sidebar.module.css";
-import { Home, Bell, Mail, User, Ellipsis, LogOut, Bookmark, Search } from "lucide-react";
-import useAuth from "../hooks/useAuth";
-import useSocket from "../hooks/useSocket";
+import {
+  Home,
+  Bell,
+  Mail,
+  User,
+  Ellipsis,
+  LogOut,
+  Bookmark,
+  Search,
+  Settings,
+} from "lucide-react";
+import useAuth from "../../hooks/useAuth";
+import useSocket from "../../hooks/useSocket";
 import { useEffect } from "react";
 import { useState } from "react";
-import useLogout from "../hooks/useLogout";
+import useLogout from "../../hooks/useLogout";
 
 const Sidebar = () => {
   const { auth } = useAuth();
@@ -54,11 +64,13 @@ const Sidebar = () => {
           to="/chat"
           className={({ isActive }) => (isActive ? styles.active : styles.link)}
         >
-          <Mail />
+          <div className={styles.relativeIcon}>
+            <Mail />
+            {unreadMessagesCount > 0 && (
+              <div className={styles.unread}>{unreadMessagesCount}</div>
+            )}
+          </div>
           <span>Chat</span>
-          {unreadMessagesCount > 0 && (
-            <span className={styles.unread}>{unreadMessagesCount}</span>
-          )}
         </NavLink>
 
         <NavLink
@@ -76,6 +88,15 @@ const Sidebar = () => {
           <User />
           <span>Profile</span>
         </NavLink>
+
+        <NavLink
+          to={`/settings`}
+          className={({ isActive }) => (isActive ? styles.active : styles.link)}
+        >
+          <Settings />
+          <span>Settings</span>
+        </NavLink>
+
 
         <div
           className={styles.bottom}

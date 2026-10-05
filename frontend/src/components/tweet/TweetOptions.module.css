@@ -1,0 +1,28 @@
+.menu {
+    position: absolute;
+    top: 2rem;
+    right: 0;
+    background: white;
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 100;
+}
+
+.menu > button {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    padding: 0.75rem 1rem;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.menu button:hover {
+    background: #f5f8fa;
+}
+
+.danger {
+    color: #e0245e;
+}

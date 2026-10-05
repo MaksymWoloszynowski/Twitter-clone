@@ -1,30 +1,21 @@
-import { useState } from "react";
 import styles from "./ProfileCard.module.css";
-import api from "../../api/api";
 import useAuth from "../../hooks/useAuth";
+import useFollow from "../../hooks/useFollow";
+import { useNavigate } from "react-router-dom";
 
 const ProfileCard = ({ profile }) => {
-  const [isFollowing, setIsFollowing] = useState(profile.followed_by_me);
+  const navigate = useNavigate()
   const { auth } = useAuth();
+  const {isFollowing, toggleFollow} = useFollow(profile)
 
   const isMe = profile.id === auth.id;
-  
-  const toggleFollow = async () => {
-    try {
-      setIsFollowing((prev) => !prev);
-      if (isFollowing) {
-        await api.delete(`/users/${profile.username}/followers`);
-      } else {
-        await api.post(`/users/${profile.username}/followers`);
-      }
-    } catch (err) {
-      console.error(err);
-      setIsFollowing(profile.followed_by_me);
-    }
+
+  const handleClick = () => {
+    navigate(`/profile/${profile.username}`);
   };
 
   return (
-    <div className={styles.container}>
+    <div className={styles.container} onClick={handleClick}>
       <div className={styles.profileImage}></div>
       <div className={styles.profileInfo}>
         <div className={styles.topRow}>

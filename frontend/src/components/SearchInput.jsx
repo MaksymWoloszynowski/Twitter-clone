@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { Search } from "lucide-react";
 import styles from "./SearchInput.module.css";
 
-const SearchInput = () => {
-  const [input, setInput] = useState("");
+const SearchInput = ({ defaultValue = "" }) => {
+  const [input, setInput] = useState(defaultValue);
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
@@ -16,7 +16,6 @@ const SearchInput = () => {
   };
 
   return (
-    <section className={styles.container}>
       <form onSubmit={handleSubmit} className={styles.searchBox}>
         <Search />
         <input
@@ -25,7 +24,6 @@ const SearchInput = () => {
           onChange={(e) => setInput(e.target.value)}
         />
       </form>
-    </section>
   );
 };
 

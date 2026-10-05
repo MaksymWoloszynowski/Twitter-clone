@@ -105,18 +105,25 @@ const getUserFollowing = async (req, res) => {
 
 const getUserFollowers = async (req, res) => {
   const username = req.params.username;
+  const userId = req.user.id;
 
   try {
     const userFollowers = await pool.query(
       `SELECT 
         u_follower.id,
         u_follower.username,
-        u_follower.bio
+        u_follower.bio,
+        EXISTS ( 
+            SELECT 1
+            FROM follows f
+            WHERE f.follower_id = $1
+              AND f.following_id = u_follower.id
+          ) AS followed_by_me
       FROM users u
       JOIN follows f ON f.following_id = u.id
       JOIN users u_follower ON u_follower.id = f.follower_id
-      WHERE u.username = $1`,
-      [username]
+      WHERE u.username = $2`,
+      [userId, username]
     );
 
     res.status(200).json(userFollowers.rows);
@@ -288,29 +295,10 @@ const editUserProfile = async (req, res) => {
 };
 
 const deleteUser = async (req, res) => {
-  const { username } = req.params;
-  const loggedUser = req.user;
+  const userId = req.user.id;
 
   try {
-    const userResult = await pool.query(
-      `SELECT id FROM users WHERE username = $1`,
-      [username]
-    );
-
-    if (userResult.rowCount === 0) {
-      return res.status(404).json({ error: "User not found" });
-    }
-
-    const userToDeleteID = userResult.rows[0].id;
-
-    const isAdmin = loggedUser.role === "admin";
-    const isOwner = loggedUser.id === userToDeleteID;
-
-    if (!isAdmin && !isOwner) {
-      return res.status(403).json({ error: "Unauthorized" });
-    }
-
-    await pool.query(`DELETE FROM users WHERE id = $1`, [userToDeleteID]);
+    await pool.query(`DELETE FROM users WHERE id = $1`, [userId]);
 
     res.status(200).json({ message: "User deleted successfully" });
   } catch (error) {

@@ -1,5 +1,4 @@
 .card {
-  position: relative;
   display: flex;
   gap: 1rem;
   padding: 1rem;
@@ -30,13 +29,8 @@
 .header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 0.25rem;
   font-size: 0.95rem;
-}
-
-.header > div {
-  display: flex;
-  gap: 0.25em;
 }
 
 .username {
@@ -45,7 +39,7 @@
 }
 
 .username:hover {
-  text-decoration: underline;
+    text-decoration: underline;
 }
 
 .handle {
